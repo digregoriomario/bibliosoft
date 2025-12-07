@@ -14,6 +14,8 @@ public class Validatore {
     /**
      * @brief Valida i dati di un oggetto Libro.
      * 
+     * @param[in] libro L'oggetto Libro da validare.
+     * 
      * @pre Il parametro "libro" non deve essere null.
      * @pre "isbn": Deve essere numerico e lungo 10 o 13 caratteri.
      * @pre "titolo": Non deve essere nullo o vuoto.
@@ -21,9 +23,8 @@ public class Validatore {
      * @pre "annoPublicazione": Non può essere superiore all'anno corrente.
      * @pre "autori": Verifica che i nomi contengano solo lettere, spazi o punti.
      * 
-     * * @param[in] libro L'oggetto Libro da validare.
-     * 
      * @throws IllegalArgumentException Se uno qualsiasi dei dati non rispetta le precondizioni.
+     * @throws NullPointerException Se l'oggetto libro è null.
      */
     public static void validaLibro(Libro libro) {
     }
@@ -31,14 +32,15 @@ public class Validatore {
     /**
      * @brief Valida i dati di un oggetto Utente.
      * 
-     * * @pre Il parametro 'utente' non deve essere null.
+     * @param[in] utente L'oggetto Utente da validare.
+     * 
+     * @pre Il parametro 'utente' non deve essere null.
      * @pre 'matricola' deve essere composta solo da numeri.
      * @pre 'nome' e 'cognome' devono contenere solo caratteri alfabetici.
      * @pre 'email' deve terminare con "@studenti.unisa.it".
      * 
-     * * @param[in] utente L'oggetto Utente da validare.
-     * 
      * @throws IllegalArgumentException Se i dati non rispettano il formato richiesto delle precondizioni.
+     * @throws NullPointerException Se l'oggetto libro è null.
      */
     public static void validaUtente(Utente utente) {
     }
