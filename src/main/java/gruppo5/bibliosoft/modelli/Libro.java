@@ -31,9 +31,7 @@ public class Libro {
      * @brief Costruttore della classe Libro.
      *
      * Inizializza un nuovo libro nel sistema.
-     * Effettua un controllo preventivo sui dati: se il numero di copie è inferiore a uno
-     * o se mancano dati essenziali, impedisce la creazione dell'oggetto per mantenere
-     * l'integrità del dominio.
+     * Effettua un controllo preventivo sui dati per mantenere l'integrità del dominio.
      *
      * @param[in] isbn Codice univoco (ISBN).
      * @param[in] titolo Titolo dell'opera.
@@ -41,9 +39,13 @@ public class Libro {
      * @param[in] annoPubblicazione Anno di pubblicazione.
      * @param[in] copieTotali Numero totale di copie fisiche acquisite.
      *
-     * @throws IllegalArgumentException Se $copieTotali < 1$ o se $isbn$ è nullo/vuoto.
-     * Questo rispecchia il feedback di errore richiesto per "Dati non validi".
-     * @post $copieDisponibili == copieTotali$ (Tutte le copie sono inizialmente disponibili).
+     * @pre isbn != null && !isbn.isEmpty() (Identificativo obbligatorio).
+     * @pre titolo != null (Dato essenziale).
+     * @pre copieTotali >= 1 (Un nuovo libro deve avere consistenza fisica).
+     *
+     * @throws IllegalArgumentException Se le precondizioni non sono rispettate.
+     * 
+     * @post copieDisponibili == copieTotali (Tutte le copie sono inizialmente disponibili).
      */
     
     public Libro(String isbn, String titolo, List<String> autori, int annoPubblicazione, int copieTotali) {
@@ -53,10 +55,11 @@ public class Libro {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    
     public String getTitolo() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
+    
     public void setTitolo(String titolo) {
     }
 
@@ -81,14 +84,17 @@ public class Libro {
    /**
      * @brief Aggiorna il numero totale di copie del libro.
      *
-     * Modifica la consistenza fisica dell'archivio. 
-     * Il metodo include un controllo di sicurezza: non è permesso ridurre il numero totale 
-     * di copie al di sotto del numero di copie attualmente in prestito (copie non disponibili).
+     * Modifica la consistenza fisica dell'archivio.
+     * Il metodo include un controllo di sicurezza: non è permesso ridurre il numero totale
+     * di copie al di sotto del numero di copie attualmente in prestito.
      *
      * @param[in] copieTotali Il nuovo numero totale di copie.
      *
-     * @throws IllegalArgumentException Se $copieTotali < (this.copieTotali - this.copieDisponibili)$.
-     * @post $this.copieTotali == copieTotali$
+     * @pre copieTotali >= (this.copieTotali - this.copieDisponibili) (Coerenza prestiti attivi).
+     * 
+     * @throws IllegalArgumentException Se si tenta di ridurre le copie sotto il limite dei prestiti in corso.
+     * 
+     * @post this.copieTotali == copieTotali
      */
     public void setCopieTotali(int copieTotali) {
     }
@@ -99,8 +105,12 @@ public class Libro {
 
    /**
      * @brief Imposta le copie disponibili.
-     * * Metodo utilizzato internamente dai servizi di prestito/restituzione.
+     * 
+     * Metodo utilizzato internamente dai servizi di prestito/restituzione.
+     *
      * @param copieDisponibili Nuovo valore.
+     * 
+     * @pre 0 <= copieDisponibili <= copieTotali
      */
     public void setCopieDisponibili(int copieDisponibili) {
     }
@@ -109,50 +119,63 @@ public class Libro {
      * @brief Verifica la disponibilità del libro per un nuovo prestito.
      *
      * Controlla se vi sono copie fisiche non attualmente in prestito.
-     * Questo controllo è il prerequisito fondamentale per la "Registrazione prestiti"[cite: 98].
+     * Prerequisito per la "Registrazione prestiti".
      *
-     * @return true se $copieDisponibili > 0$, false altrimenti.
+     * @return true se copieDisponibili > 0, false altrimenti.
      */
     public boolean isDisponibile() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
+    
     /**
-     * 
-     * @brief Verifica l'uguaglianza logica tra due libri.
+     * @brief Verifica se esistono copie del libro attualmente in prestito.
      *
-     * L'uguaglianza è determinata esclusivamente dal codice univoco (ISBN),
-     * indipendentemente da eventuali altri dati.
+     * Funge da "guardia" per l'operazione di cancellazione.
+     * Il sistema impedisce la cancellazione se il libro risulta in prestito.
+     *
+     * @return true se copieDisponibili != copieTotali.
+     */
+    public boolean haPrestitiAttivi(){
+    }
+    
+    /**
+     * @brief Verifica l'uguaglianza logica tra due libri.
+     * Basata sull'ISBN univoco.
      *
      * @param[in] oggetto L'oggetto da confrontare.
+     * 
      * @return true se l'oggetto è un Libro con lo stesso ISBN.
      */
     public boolean equals(Object oggetto) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-/*
-    * @brief Definisce l'ordinamento dei libri per le liste visualizzate.
+    
+    
+     /**
+     * @brief Definisce l'ordinamento dei libri per le liste visualizzate.
      *
-     * Implementa il requisito funzionale di visualizzazione liste ordinate.
-     * L'ordinamento primario è alfabetico basato sul Titolo[cite: 34].
-     * A parità di titolo, viene usato l'ISBN come criterio secondario per stabilità.
+     * Ordinamento alfabetico per Titolo, poi per ISBN[cite: 34].
      *
      * @param[in] libro Il libro da comparare.
-     * @return Valore negativo, zero o positivo per ordinamento Titolo -> ISBN.
+     * 
+     * @return Valore negativo, zero o positivo.
+     * 
+     * @pre libro != null
      */
     public int compareTo(Libro libro) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-/**
+    /**
      * @brief Verifica se il libro è stato scritto da un determinato autore.
      *
-     * Supporta la funzionalità di ricerca per autore[cite: 39].
-     * La ricerca è implementata in modo "case-insensitive" (ignorando maiuscole/minuscole)
-     * per garantire che l'utente trovi il libro anche in caso di imprecisioni nell'input.
+     * Supporta la ricerca per autore (case-insensitive)[cite: 39].
      *
-     * @param[in] filtroAutore Stringa contenente il nome (o parte di esso) da cercare.
-     * @return true se uno degli autori contiene la stringa filtro (case-insensitive).
+     * @param[in] filtroAutore Stringa contenente il nome da cercare.
+     * 
+     * @return true se corrisponde.
+     * 
+     * @pre filtroAutore != null
      */
     public boolean contieneAutore(String filtroAutore) {
         throw new UnsupportedOperationException("Not supported yet.");
