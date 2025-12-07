@@ -118,6 +118,7 @@ public class Libro {
     }
 
     /**
+     * 
      * @brief Verifica l'uguaglianza logica tra due libri.
      *
      * L'uguaglianza è determinata esclusivamente dal codice univoco (ISBN),
