@@ -25,12 +25,14 @@ public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
     /**
      * @brief Aggiunge un elemento alla collezione verificando l'unicità.
      * 
-     * * @param[in] elemento L'elemento da aggiungere.
+     *@param[in] elemento L'elemento da aggiungere.
      * 
+     * @pre elemento diverso da null.
+     * @pre elemnti non deve contenere elemento.
      * @post L'archivio contiene l'elemento aggiunto.
      * 
-     * @throws IllegalStateException se l'elemento è già presente (violazione invarianti).
-     * @throws NullPointerException se l'elemento è null (violazione invarianti).
+     * @throws IllegalStateException se l'elemento è già presente.
+     * @throws NullPointerException se l'elemento è null.
      */
     public void aggiungi(T elemento) {
     }
@@ -40,6 +42,7 @@ public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
      * 
      * * @param[in] elemento L'elemento da rimuovere.
      * 
+     * @pre L'elemento deve essere diverso da null.
      * @pre L'elemento deve essere presente nell'archivio.
      * @post L'archivio non contiene più l'elemento specificato.
      */
@@ -54,6 +57,7 @@ public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
      * * @param[in] filtro criterio di filtraggio. Se null, restituisce tutti gli elementi.
      * 
      * @return Lista degli elementi che soddisfano il filtro.
+     * @post risultato diverso da null.
      */
     public List<T> cerca(InterfacciaFiltro<T> filtro) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -63,6 +67,7 @@ public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
      * @brief Restituisce una copia della lista degli elementi.
      * 
      * * @return ArrayList contenente gli elementi ordinati.
+     * @post risultato diverso da null.
      */
     public List<T> lista() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -70,11 +75,11 @@ public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
     
     
      /**
-     * @brief Restituisce la lunghezza del TreeSet.
+     * @brief Restituisce il numero di elemnti nel sotto-archivio.
      * 
-     * * @return Numero di elementi presenti nel TreeSet.
+     * * @return Numero di elementi presenti.
      * 
-     * @post int ritorno >= 0
+     * @post int risultato non negativo.
      */
     public int conta() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -87,9 +92,10 @@ public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
      * * Poiché gli elementi sono in un Set, la modifica richiede la rimozione
      * del vecchio oggetto e l'inserimento del nuovo per aggiornare l'ordinamento.
      * 
-     * * @param[in,out] elemento L'elemento aggiornato.
+     * * @param[in] elemento L'elemento aggiornato.
      * 
-     *  @post L'elemento nell'archivio è aggiornato con i nuovi dati.
+     * @pre elemento diverso da null.
+     * @post L'elemento nell'archivio è aggiornato con i nuovi dati.
      */
     public void modifica(T elemento) {
     }
