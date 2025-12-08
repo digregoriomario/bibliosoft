@@ -1,9 +1,15 @@
+/**
+ * @file Utente.java
+ * @author gruppo5
+ * @version 1.0
+ */
+
+
 package gruppo5.bibliosoft.modelli;
 
 /**
- * @file Utente.java
  * @brief Classe che rappresenta l'entità Utente nel dominio dell'applicazione.
- *
+ * @details
  * Questa classe gestisce i dati anagrafici di uno studente universitario e lo stato
  * dei suoi prestiti correnti.
  * Rappresenta uno dei componenti fondamentali per l'associazione nei processi di prestito.
@@ -11,10 +17,10 @@ package gruppo5.bibliosoft.modelli;
  * La classe garantisce il rispetto dei vincoli di dominio, in particolare riguardo
  * al formato della mail istituzionale e al numero massimo di prestiti consentiti.
  *
- * @invariant matricola != null && !matricola.isEmpty()
- * @invariant email != null && email.endsWith("@studenti.unisa.it")
- * @invariant prestitiAttivi != null
- * @invariant prestitiAttivi.size() <= 3 (Vincolo di business sui prestiti contemporanei).
+ * @invariant {@code matricola != null && !matricola.isEmpty()}
+ * @invariant {@code email != null && email.endsWith("@studenti.unisa.it")}
+ * @invariant {@code prestitiAttivi != null}
+ * @invariant {@code prestitiAttivi.size() <= 3} (Vincolo di business sui prestiti contemporanei).
  */
 public class Utente {
 
@@ -30,7 +36,7 @@ public class Utente {
 
     /**
      * @brief Costruttore della classe Utente.
-     *
+     * @details
      * Inizializza un nuovo utente nel sistema con i dati anagrafici forniti.
      * Include controlli rigorosi sui formati dei dati (in particolare l'email istituzionale).
      * All'atto della creazione, la lista dei prestiti attivi viene inizializzata vuota.
@@ -40,20 +46,19 @@ public class Utente {
      * @param[in] cognome Cognome dell'utente.
      * @param[in] email Indirizzo e-mail istituzionale (deve terminare con "@studenti.unisa.it").
      *
-     * @pre matricola != null && !matricola.isEmpty() (Identificativo obbligatorio).
-     * @pre email != null && email.endsWith("@studenti.unisa.it") (Vincolo di validazione).
-     * @pre nome != null && cognome != null
+     * @pre {@code matricola != null && !matricola.isEmpty()} (Identificativo obbligatorio).
+     * @pre {@code email != null && email.endsWith("@studenti.unisa.it")} (Vincolo di validazione).
+     * @pre {@code nome != null && cognome != null}
      *
+     * @post {@code prestitiAttivi.isEmpty() = true} (Nuovo utente senza prestiti).
      * @throws IllegalArgumentException Se i dati non rispettano il formato richiesto.
-     *
-     * @post prestitiAttivi.isEmpty() == true (Nuovo utente senza prestiti).
      */
     public Utente(String matricola, String nome, String cognome, String email) {
     }
 
     /**
      * @brief Restituisce la matricola dell'utente.
-     *
+     * @details
      * La matricola è l'identificativo univoco utilizzato per le ricerche puntuali
      * e per distinguere gli utenti nel sistema.
      *
@@ -83,12 +88,12 @@ public class Utente {
 
     /**
      * @brief Modifica l'indirizzo email dell'utente.
-     *
+     * @details
      * Permette di aggiornare il recapito istituzionale, mantenendo la validità del dominio.
      *
      * @param[in] email Nuova email da associare.
      *
-     * @pre email != null && email.endsWith("@studenti.unisa.it").
+     * @pre {@code email != null && email.endsWith("@studenti.unisa.it")}
      * 
      * @throws IllegalArgumentException Se l'email non rispetta il dominio richiesto.
      */
@@ -97,7 +102,7 @@ public class Utente {
 
     /**
      * @brief Restituisce una copia della lista dei prestiti correnti dell'utente.
-     *
+     * @details
      * Recupera l'elenco dei libri che l'utente ha attualmente in carico
      * (in stato "In Corso" o "In Ritardo").
      * Restituisce una nuova lista per preservare l'incapsulamento.
@@ -110,14 +115,14 @@ public class Utente {
 
     /**
      * @brief Associa un nuovo prestito all'utente.
-     *
+     * @details
      * Aggiunge un prestito alla lista dei prestiti attivi.
      * Questa operazione è parte del processo di "Registrazione prestiti".
      *
      * @param[in] prestito L'oggetto Prestito da aggiungere.
      *
-     * @pre prestito != null
-     * @pre prestitiAttivi.size() < 3 (L'utente non deve avere già 3 prestiti attivi).
+     * @pre {@code prestito != null}
+     * @pre {@code prestitiAttivi.size() < 3} (L'utente non deve avere già 3 prestiti attivi).
      *
      * @throws IllegalStateException Se l'utente ha raggiunto il limite massimo di prestiti.
      */
@@ -126,24 +131,24 @@ public class Utente {
 
     /**
      * @brief Rimuove un prestito dalla lista dell'utente.
-     *
+     * @details
      * Operazione richiamata durante la fase di "Restituzione libri".
      * Quando un prestito viene concluso, non deve più figurare tra i prestiti attivi dell'utente
      * ai fini del conteggio del limite massimo.
      *
      * @param[in] prestito Il prestito da rimuovere (che passa allo stato Concluso).
-     * @pre prestito != null
+     * @pre {@code prestito != null}
      */
     public void rimuoviPrestito(Prestito prestito) {
     }
 
     /**
      * @brief Verifica se l'utente possiede prestiti non ancora conclusi.
-     *
+     * @details
      * Metodo di utilità fondamentale per validare la cancellazione di un utente.
      * Secondo i requisiti, non è possibile eliminare un utente se ha ancora prestiti pendenti ("In Corso" o "In Ritardo").
      *
-     * @return true se prestitiAttivi.size() > 0, false altrimenti.
+     * @return true se {@code prestitiAttivi.size() > 0}, false altrimenti.
      */
     public boolean haPrestitiAttivi() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -151,7 +156,7 @@ public class Utente {
 
     /**
      * @brief Verifica l'uguaglianza logica tra due utenti.
-     *
+     * @details
      * L'uguaglianza è determinata esclusivamente dalla matricola univoca,
      * indipendentemente da nome o cognome (che potrebbero presentare omonimie).
      *
@@ -165,7 +170,7 @@ public class Utente {
 
     /**
      * @brief Definisce l'ordinamento naturale degli utenti.
-     *
+     * @details
      * Implementa la logica di comparazione per visualizzare le liste ordinate.
      * I requisiti specificano esplicitamente un ordinamento alfabetico basato
      * su Cognome e poi Nome. La matricola è usata come criterio terziario per stabilità.
@@ -174,7 +179,7 @@ public class Utente {
      * 
      * @return Valore negativo, zero o positivo in base all'ordine lessicografico.
      * 
-     * @pre utente != null
+     * @pre {@code utente != null}
      */
     public int compareTo(Utente utente) {
         throw new UnsupportedOperationException("Not supported yet.");

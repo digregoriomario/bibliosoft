@@ -1,9 +1,14 @@
+/**
+ * @file Prestito.java
+ * @author gruppo5
+ * @version 1.0
+ */
+
 package gruppo5.bibliosoft.modelli;
 
 /**
- * @file Prestito.java
  * @brief Classe che rappresenta l'associazione temporale tra un Utente e un Libro.
- *
+ * @details
  * Questa classe gestisce il ciclo di vita del prestito, monitorando le scadenze
  * e lo stato corrente (In Corso, In Ritardo, Concluso).
  * Rappresenta l'entità fondamentale per il tracciamento delle operazioni di business.
@@ -11,11 +16,11 @@ package gruppo5.bibliosoft.modelli;
  * Implementa l'interfaccia Comparable per soddisfare il requisito di visualizzazione
  * ordinata delle scadenze.
  *
- * @invariant id != null && !id.isEmpty()
- * @invariant utente != null
- * @invariant libro != null
- * @invariant dataInizio != null && dataPrevista != null
- * @invariant !dataPrevista.isBefore(dataInizio) (La scadenza non può essere antecedente all'inizio)
+ * @invariant {@code id != null && !id.isEmpty()}
+ * @invariant {@code utente != null}
+ * @invariant {@code libro != null}
+ * @invariant {@code dataInizio != null && dataPrevista != null}
+ * @invariant {@code !dataPrevista.isBefore(dataInizio)} (La scadenza non può essere antecedente all'inizio)
  */
 
 public class Prestito {
@@ -36,7 +41,7 @@ public class Prestito {
 
     /**
      * @brief Costruttore della classe Prestito.
-     *
+     * @details
      * Crea una nuova istanza di prestito attiva.
      * Il sistema genera automaticamente un identificativo univoco (UUID) e
      * imposta lo stato iniziale a "IN_CORSO", decrementando le copie del libro
@@ -49,15 +54,15 @@ public class Prestito {
      * @param[in] dataInizio La data di inizio del prestito.
      * @param[in] dataPrevista La data entro cui il libro deve essere restituito.
      *
-     * @pre utente != null
-     * @pre libro != null
-     * @pre dataInizio != null && dataPrevista != null
-     * @pre !dataPrevista.isBefore(dataInizio)
+     * @pre {@code utente != null}
+     * @pre {@code libro != null}
+     * @pre {@code dataInizio != null && dataPrevista != null}
+     * @pre {@code !dataPrevista.isBefore(dataInizio)}
+     * 
+     * @post {@code stato = StatoPrestito.IN_CORSO}
+     * @post {@code id != null}
      * 
      * @throws IllegalArgumentException Se le precondizioni sui parametri non sono rispettate.
-     * 
-     * @post stato == StatoPrestito.IN_CORSO 
-     * @post id != null
      */
     public Prestito(Utente utente, Libro libro, LocalDate dataInizio, LocalDate dataPrevista) {
     }
@@ -79,12 +84,10 @@ public class Prestito {
 
     /**
      * @brief Imposta il libro associato al prestito.
-     * 
+     * @details
      * @param[in] libro Il nuovo libro.
-     * 
+     * @pre {@code libro != null} (Necessario per mantenere l'invariante di classe).
      * @throws IllegalArgumentException Se il libro è null.
-     * 
-     * @pre libro != null (Necessario per mantenere l'invariante di classe).
      */
     public void setLibro(Libro libro) {
     }
@@ -102,13 +105,11 @@ public class Prestito {
 
     /**
      * @brief Modifica la data di restituzione prevista.
-     * 
+     * @details
      * @param[in] dataPrevista Nuova data di scadenza. 
-     * 
+     * @pre {@code dataPrevista != null}
+     * @pre {@code !dataPrevista.isBefore(this.dataInizio)} (Non può scadere prima di essere iniziato).
      * @throws IllegalArgumentException Se la data è null o non valida logicamente. 
-     * 
-     * @pre dataPrevista != null
-     * @pre !dataPrevista.isBefore(this.dataInizio) (Non può scadere prima di essere iniziato).
      */
     public void setDataPrevista(LocalDate dataPrevista) {
     }
@@ -119,16 +120,15 @@ public class Prestito {
 
     /**
      * @brief Imposta la data di restituzione effettiva.
-     * 
+     * @details
      * Operazione parte del processo di "Restituzione libri".
      * Viene invocata quando lo stato passa a "Concluso".
      * 
      * @param[in] dataRestituzioneEffettiva La data in cui il libro è rientrato.
      * 
+     * @pre {@code dataRestituzioneEffettiva != null} (Nel contesto di una restituzione avvenuta).
+     * @pre {@code !dataRestituzioneEffettiva.isBefore(dataInizio)}
      * @throws IllegalArgumentException Se la data è antecedente all'inizio del prestito. 
-     * 
-     * @pre dataRestituzioneEffettiva != null (Nel contesto di una restituzione avvenuta).
-     * @pre !dataRestituzioneEffettiva.isBefore(dataInizio)
      */
     public void setDataRestituzioneEffettiva(LocalDate dataRestituzioneEffettiva) {
     }
@@ -142,25 +142,24 @@ public class Prestito {
 
     /**
      * @brief Aggiorna lo stato del prestito (Calcolo dei ritardi).
-     *
-     * Implementa la logica automatica richiesta dal requisito "Calcolo dei ritardi"[cite: 105].
+     * @details
+     * Implementa la logica automatica richiesta dal requisito "Calcolo dei ritardi".
      * Se la data corrente è successiva alla data prevista e il prestito è ancora in corso,
      * il sistema identifica il prestito come "In Ritardo".
      *
      * @param[in] oggi La data di riferimento (solitamente la data di sistema all'avvio o visualizzazione).
      * 
+     * @pre {@code oggi != null}
+     * 
+     * @post Se ({@code oggi > dataPrevista AND stato == IN_CORSO}) allora {@code stato = IN_RITARDO}
      * @throws IllegalArgumentException Se la data passata è null.
-     * 
-     * @pre oggi != null
-     * 
-     * @post Se (oggi > dataPrevista AND stato == IN_CORSO) allora stato == IN_RITARDO.
      */
     public void aggiornaStato(LocalDate oggi) {
     }
 
     /**
      * @brief Verifica se il prestito è attualmente in ritardo.
-     *
+     * @details
      * Metodo di utilità che esegue l'aggiornamento dello stato prima di restituire il booleano.
      * Utile per l'interfaccia utente che deve "Evidenziare i prestiti in ritardo".
      *
@@ -168,14 +167,14 @@ public class Prestito {
      * 
      * @return true se lo stato risulta IN_RITARDO.
      * 
-     * @pre oggi != null (Delegato a aggiornaStato).
+     * @pre {@code oggi != null} (Delegato a aggiornaStato()).
      */
     public boolean eInRitardo(LocalDate oggi) {
     }
     
     /**
      * @brief Verifica l'uguaglianza logica tra due prestiti.
-     *
+     * @details
      * Basata sull'identificativo univoco (ID) generato (UUID).
      *
      * @param[in] oggetto L'oggetto da confrontare.
@@ -188,7 +187,7 @@ public class Prestito {
 
    /**
      * @brief Confronta due prestiti per ordinamento.
-     *
+     * @details
      * Implementa il requisito 3.1.3.2: "Ordinare automaticamente i prestiti attivi 
      * per data di restituzione (crescente)".
      * In caso di date uguali, utilizza l'ID come discriminante per garantire stabilità.
@@ -196,10 +195,8 @@ public class Prestito {
      * @param[in] prestito Il prestito con cui confrontare l'istanza corrente.
      * 
      * @return Valore negativo se questo prestito scade prima dell'altro.
-     * 
+     * @pre {@code prestito != null}
      * @throws NullPointerException Se l'oggetto prestito passato è null.
-     * 
-     * @pre prestito != null
      */
     public int compareTo(Prestito prestito) {
         throw new UnsupportedOperationException("Not supported yet.");
