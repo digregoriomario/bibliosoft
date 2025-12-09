@@ -51,19 +51,10 @@ public class Utente {
      * @pre {@code nome != null && cognome != null}
      *
      * @post {@code prestitiAttivi.isEmpty() = true} (Nuovo utente senza prestiti).
-     * @throws IllegalArgumentException Se i dati non rispettano il formato richiesto.
      */
     public Utente(String matricola, String nome, String cognome, String email) {
     }
 
-    /**
-     * @brief Restituisce la matricola dell'utente.
-     * @details
-     * La matricola è l'identificativo univoco utilizzato per le ricerche puntuali
-     * e per distinguere gli utenti nel sistema.
-     *
-     * @return Stringa contenente la matricola.
-     */
     public String getMatricola() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -86,17 +77,6 @@ public class Utente {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * @brief Modifica l'indirizzo email dell'utente.
-     * @details
-     * Permette di aggiornare il recapito istituzionale, mantenendo la validità del dominio.
-     *
-     * @param[in] email Nuova email da associare.
-     *
-     * @pre {@code email != null && email.endsWith("@studenti.unisa.it")}
-     * 
-     * @throws IllegalArgumentException Se l'email non rispetta il dominio richiesto.
-     */
     public void setEmail(String email) {
     }
 

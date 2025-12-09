@@ -62,7 +62,6 @@ public class Prestito {
      * @post {@code stato = StatoPrestito.IN_CORSO}
      * @post {@code id != null}
      * 
-     * @throws IllegalArgumentException Se le precondizioni sui parametri non sono rispettate.
      */
     public Prestito(Utente utente, Libro libro, LocalDate dataInizio, LocalDate dataPrevista) {
     }
@@ -82,13 +81,6 @@ public class Prestito {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * @brief Imposta il libro associato al prestito.
-     * @details
-     * @param[in] libro Il nuovo libro.
-     * @pre {@code libro != null} (Necessario per mantenere l'invariante di classe).
-     * @throws IllegalArgumentException Se il libro è null.
-     */
     public void setLibro(Libro libro) {
     }
 
@@ -103,14 +95,6 @@ public class Prestito {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * @brief Modifica la data di restituzione prevista.
-     * @details
-     * @param[in] dataPrevista Nuova data di scadenza. 
-     * @pre {@code dataPrevista != null}
-     * @pre {@code !dataPrevista.isBefore(this.dataInizio)} (Non può scadere prima di essere iniziato).
-     * @throws IllegalArgumentException Se la data è null o non valida logicamente. 
-     */
     public void setDataPrevista(LocalDate dataPrevista) {
     }
 
@@ -118,18 +102,6 @@ public class Prestito {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * @brief Imposta la data di restituzione effettiva.
-     * @details
-     * Operazione parte del processo di "Restituzione libri".
-     * Viene invocata quando lo stato passa a "Concluso".
-     * 
-     * @param[in] dataRestituzioneEffettiva La data in cui il libro è rientrato.
-     * 
-     * @pre {@code dataRestituzioneEffettiva != null} (Nel contesto di una restituzione avvenuta).
-     * @pre {@code !dataRestituzioneEffettiva.isBefore(dataInizio)}
-     * @throws IllegalArgumentException Se la data è antecedente all'inizio del prestito. 
-     */
     public void setDataRestituzioneEffettiva(LocalDate dataRestituzioneEffettiva) {
     }
 

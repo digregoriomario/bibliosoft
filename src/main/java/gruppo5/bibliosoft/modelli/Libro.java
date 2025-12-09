@@ -49,8 +49,6 @@ public class Libro {
      * @pre {@code copieTotali >= 1} (Un nuovo libro deve avere consistenza
      * fisica)
      * @post copieDisponibili = copieTotali (Tutte le copie sono inizialmente disponibili).
-     *
-     * @throws IllegalArgumentException Se le precondizioni non sono rispettate.
      */
     public Libro(String isbn, String titolo, List<String> autori, int annoPubblicazione, int copieTotali) {
     }
@@ -84,22 +82,6 @@ public class Libro {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * @brief Aggiorna il numero totale di copie del libro.
-     * @details Modifica la consistenza fisica dell'archivio. Il metodo include
-     * un controllo di sicurezza: non è permesso ridurre il numero totale di
-     * copie al di sotto del numero di copie attualmente in prestito.
-     *
-     * @param[in] copieTotali Il nuovo numero totale di copie.
-     *
-     * @pre {@code copieTotali >= (this.copieTotali - this.copieDisponibili)} (Coerenza prestiti attivi)
-     * @post {@code this.copieTotali = copieTotali}
-     *
-     * @throws IllegalArgumentException Se si tenta di ridurre le copie sotto il
-     * limite dei prestiti in corso.
-     *
-     *
-     */
     public void setCopieTotali(int copieTotali) {
     }
 
@@ -107,15 +89,6 @@ public class Libro {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * @brief Imposta le copie disponibili.
-     * @details Metodo utilizzato internamente dai servizi di
-     * prestito/restituzione.
-     *
-     * @param copieDisponibili Nuovo valore.
-     *
-     * @pre {@code 0 <= copieDisponibili <= copieTotali}
-     */
     public void setCopieDisponibili(int copieDisponibili) {
     }
 
