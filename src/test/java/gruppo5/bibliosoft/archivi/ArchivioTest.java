@@ -14,9 +14,6 @@ public class ArchivioTest {
 
     private Archivio archivio;
 
-    public ArchivioTest() {
-    }
-
     @BeforeEach
     public void setUp() { // Garantisce un ambiente pulito e isolato per ogni singolo test.
         archivio = new Archivio();

@@ -12,11 +12,19 @@ public class ServizioLibriTest {
 
     private Archivio archivio;
     private ServizioLibri servizioLibri;
+    private Libro libroValido;
 
     @BeforeEach
     public void setUp() {
         archivio = new Archivio();
         servizioLibri = new ServizioLibri(archivio);
+        
+        libroValido = new Libro("9788800000000", "Libro Test", List.of("Autore Test"), 2020, 5);
+    }
+    
+    @Test
+    public void testCostruttore() { //test del costruttore: controlla se il servizio viene istanziato correttamente
+        assertNotNull(servizioLibri, "Il servizio dovrebbe essere stato istanziato.");
     }
 
     @Test
@@ -35,6 +43,27 @@ public class ServizioLibriTest {
                 () -> servizioLibri.modificaLibro(null),
                 "Mi aspettavo un'eccezione per libro nullo."
         );
+    }
+    
+    @Test
+    public void testEliminaLibro1() { //test di eliminaLibro(): controlla se il libro viene rimosso se non ha prestiti attivi
+        servizioLibri.aggiungiLibro(libroValido);
+        
+        servizioLibri.eliminaLibro(libroValido);
+        
+        assertEquals(0, servizioLibri.getLibriTotali(), "Il libro dovrebbe essere stato rimosso.");
+    }
+
+    @Test
+    public void testEliminaLibro2() { //test di eliminaLibro(): controlla che venga impedita l'eliminazione se ci sono copie in prestito
+        servizioLibri.aggiungiLibro(libroValido);
+        
+        libroValido.setCopieDisponibili(4); 
+        
+        assertThrows(
+                IllegalStateException.class, 
+                () -> servizioLibri.eliminaLibro(libroValido),
+                "Impossibile eliminare: libro in prestito o senza copie disponibili");
     }
 
     @Test

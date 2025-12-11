@@ -6,6 +6,7 @@ import gruppo5.bibliosoft.modelli.Prestito;
 import gruppo5.bibliosoft.modelli.StatoPrestito;
 import gruppo5.bibliosoft.modelli.Utente;
 import gruppo5.bibliosoft.archivi.filtri.FiltroPrestito;
+import gruppo5.bibliosoft.archivi.filtri.InterfacciaFiltro;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,11 +20,21 @@ public class ServizioPrestitiTest {
 
     private Archivio archivio;
     private ServizioPrestiti servizio;
+    private Libro libro;
+    private Utente utente;
 
     @BeforeEach
     public void setUp() {
         archivio = new Archivio();
         servizio = new ServizioPrestiti(archivio);
+        
+        utente = new Utente("123", "Mario", "Rossi", "m.rossi@studenti.unisa.it");
+        libro = new Libro("1234567890", "Libro Test", List.of("Autore"), 2020, 5);
+    }
+    
+    @Test
+    public void testCostruttore() { //test del costruttore: verifica che il servizio venga inizializzato
+        assertNotNull(servizio, "Il servizio dovrebbe essere stato creato correttamente.");
     }
 
     @Test
@@ -34,6 +45,33 @@ public class ServizioPrestitiTest {
         assertEquals(0, lista.size(), "La dimensione della lista dovrebbe essere 0.");
     }
 
+    @Test
+    public void testCerca() { //test di cerca(): verifica il funzionamento con un filtro generico
+        servizio.registraPrestito(utente, libro, LocalDate.now().plusDays(15));
+        
+        InterfacciaFiltro<Prestito> filtroTutto = prestito -> true;
+        
+        List<Prestito> risultato = servizio.cerca(filtroTutto);
+        assertEquals(1, risultato.size(), "Il filtro dovrebbe trovare il prestito.");
+    }
+
+    @Test
+    public void testStorico() { //test di storico(): verifica che ritorni solo i prestiti di uno specifico utente
+        Utente altroUtente = new Utente("999", "Luigi", "Verdi", "l.verdi@unisa.it");
+        archivio.aggiungiUtente(altroUtente);
+        Libro altroLibro = new Libro("111", "Altro", List.of("B"), 2021, 5);
+
+        // Prestito utente 1
+        servizio.registraPrestito(utente, libro, LocalDate.now().plusDays(15));
+        // Prestito utente 2
+        servizio.registraPrestito(altroUtente, altroLibro, LocalDate.now().plusDays(15));
+
+        List<Prestito> storicoUtente1 = servizio.storico(utente);
+
+        assertEquals(1, storicoUtente1.size(), "Lo storico deve contenere solo i prestiti dell'utente specificato.");
+        assertEquals("123", storicoUtente1.get(0).getUtente().getMatricola(), "La matricola del prestito deve corrispondere.");
+    }
+    
     @Test
     public void testGetPrestitiInCorso() {  //test di getPrestitiInCorso(): su archivio vuoto
         assertEquals(0, servizio.getPrestitiInCorso(), "Dovrebbe restituire 0.");
@@ -122,7 +160,7 @@ public class ServizioPrestitiTest {
     }
 
     @Test
-    public void testAggiornaRitardi_creaRitardoSePrevistaPassata() {    //test di aggiornaRitardi(): con libro già in ritardo appena inserito
+    public void testAggiorna() {    //test di aggiornaRitardi(): con libro già in ritardo appena inserito
         Utente utente = new Utente("123", "Mario", "Rossi", "m@studenti.unisa.it");
         Libro libro = new Libro("1111111111", "Titolo1", List.of("Umberto Eco"), 2020, 1);
         
@@ -136,4 +174,22 @@ public class ServizioPrestitiTest {
         assertTrue(inRitardo >= 1, "Il libro dovrebbe essere già in ritardo.");
     }
 
+    @Test
+    public void testGetPrestitiConclusi() { //test di getPrestitiConclusi(): verifica il conteggio
+        servizio.registraPrestito(utente, libro, LocalDate.now().plusDays(15));
+        Prestito p = archivio.listaPrestiti().get(0);
+        servizio.registraRestituzione(p);
+
+        assertEquals(1, servizio.getPrestitiConclusi(), "Dovrebbe esserci 1 prestito concluso.");
+        assertEquals(0, servizio.getPrestitiInCorso(), "Non dovrebbero esserci prestiti in corso.");
+    }
+
+    @Test
+    public void testGetPrestitiInRitardo() { //test di getPrestitiInRitardo(): verifica il conteggio
+        Prestito pScaduto = new Prestito(utente, libro, LocalDate.now().minusDays(10), LocalDate.now().minusDays(1));
+        pScaduto.setStato(StatoPrestito.IN_RITARDO); // Simuliamo stato già settato o settato da aggiornaRitardi
+        archivio.aggiungiPrestito(pScaduto);
+
+        assertEquals(1, servizio.getPrestitiInRitardo(), "Dovrebbe esserci 1 prestito in ritardo.");
+    }
 }

@@ -10,9 +10,6 @@ public class SottoarchivioTest {
 
     private Sottoarchivio<Utente> instance;
 
-    public SottoarchivioTest() {
-    }
-
     @BeforeEach
     public void setUp() { // Garantisce un ambiente pulito e isolato (archivio vuoto) per ogni test.
         instance = new Sottoarchivio<>();

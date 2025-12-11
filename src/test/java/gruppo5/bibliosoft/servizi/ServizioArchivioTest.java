@@ -14,6 +14,13 @@ public class ServizioArchivioTest {
     public void setUp() {
         archivio = new Archivio();
     }
+    
+    @Test
+    public void testCostruttore() { //test del costruttore: controlla se il servizio viene istanziato correttamente senza errori
+        ServizioArchivio servizio = new ServizioArchivio("file_di_prova.dat", archivio);
+
+        assertNotNull(servizio, "L'oggetto ServizioArchivio dovrebbe essere stato creato e non essere null.");
+    }
 
     @Test
     public void testCarica() {   //test su carica(): con percorso file vuoto

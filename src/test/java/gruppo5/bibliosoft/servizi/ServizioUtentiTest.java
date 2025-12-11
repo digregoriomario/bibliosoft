@@ -11,11 +11,18 @@ public class ServizioUtentiTest {
 
     private Archivio archivio;
     private ServizioUtenti servizioUtenti;
+    private Utente utenteValido;
 
     @BeforeEach
     public void setUp() {
         archivio = new Archivio();
         servizioUtenti = new ServizioUtenti(archivio);
+        utenteValido = new Utente("012345", "Mario", "Rossi", "m.rossi@studenti.unisa.it");
+    }
+    
+    @Test
+    public void testCostruttore() { //test del costruttore: verifica che il servizio venga istanziato
+        assertNotNull(servizioUtenti, "Il servizio dovrebbe essere stato istanziato correttamente.");
     }
 
     @Test
@@ -45,7 +52,7 @@ public class ServizioUtentiTest {
     }
 
     @Test
-    public void testCerca() {           // test su cerca(): filtro null
+    public void testCerca1() {           // test su cerca(): filtro null
         List<Utente> utenti = servizioUtenti.cerca(null);
         
         assertNotNull(utenti, "La lista non dovvrebbe essere null.");
@@ -53,13 +60,33 @@ public class ServizioUtentiTest {
     }
 
     @Test
-    public void testCercaFiltroVuoto() {   // test su cerca(): filtro vuoto
+    public void testCerca2() {   // test su cerca(): filtro vuoto
         List<Utente> utenti = servizioUtenti.cerca("");
         
         assertNotNull(utenti, "La lista non dovvrebbe essere null.");
         assertEquals(0, utenti.size(), "La lista dovrebbe essere vuota.");
     }
 
+    @Test
+    public void testEliminaUtente1() { //test di eliminaUtente(): verifica rimozione utente senza prestiti
+        servizioUtenti.aggiungiUtente(utenteValido);
+
+        servizioUtenti.eliminaUtente(utenteValido);
+
+        assertEquals(0, servizioUtenti.getUtentiTotali(), "L'utente dovrebbe essere stato rimosso.");
+    }
+
+    @Test
+    public void testEliminaUtente2() { //test di eliminaUtente(): verifica blocco eliminazione se ci sono prestiti
+        servizioUtenti.aggiungiUtente(utenteValido);
+
+        utenteValido.aggiungiPrestito(null);
+
+        assertThrows(IllegalStateException.class, 
+            () -> servizioUtenti.eliminaUtente(utenteValido),
+            "Utente con prestiti attivi: eliminazione negata");       
+    }
+    
     @Test
     public void testGetUtentiTotali() {    // test su getUtentiTotali(): archivio vuoto
         assertEquals(0, servizioUtenti.getUtentiTotali(), "Dovrebbe essere 0.");
