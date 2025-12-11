@@ -5,6 +5,13 @@
  */
 package gruppo5.bibliosoft.servizi;
 
+import gruppo5.bibliosoft.modelli.Libro;
+import gruppo5.bibliosoft.archivi.Archivio;
+import gruppo5.bibliosoft.archivi.filtri.FiltroLibro;
+import gruppo5.bibliosoft.archivi.filtri.InterfacciaFiltro;
+import gruppo5.bibliosoft.strumenti.Validatore;
+import java.util.List;
+
 /**
  * @brief Gestisce la logica di business relativa ai Libri (RF 3.1.1 - Gestione
  * Libri).
@@ -17,7 +24,7 @@ package gruppo5.bibliosoft.servizi;
  */
 public class ServizioLibri {
 
-    private final Archivio archivio;
+    private final Archivio archivio;    //attributo archivio
 
     /**
      * @brief Costruttore del servizio.
@@ -28,6 +35,7 @@ public class ServizioLibri {
      * @post attributi correttamente inizializzati.
      */
     public ServizioLibri(Archivio archivio) {
+        this.archivio = archivio;
     }
 
     /**
@@ -46,10 +54,13 @@ public class ServizioLibri {
      * @throws IllegalArgumentException Se la validazione fallisce.
      * @throws IllegalStateException Se il libro è già presente.
      *
-     * @see strumenti.Validatore
+     * @see Validatore
      * 
      */
     public void aggiungiLibro(Libro libro) {
+        Validatore.validaLibro(libro);  //se il validatore valida libro da aggiungere(tutti i parametri sono validi)...
+        //aggiungi eventuali controlli per vedere se il libro può essere aggiunto  (nulla penso)
+        archivio.aggiungiLibro(libro);  //...allora aggiungo il libro all'archivio
     }
 
     /**
@@ -67,6 +78,9 @@ public class ServizioLibri {
      * @throws IllegalArgumentException Se i dati non sono validi.
      */
     public void modificaLibro(Libro libro) {
+        Validatore.validaLibro(libro);  //se il validatore valida libro da modificare(tutti i parametri sono validi)...
+        //aggiungi eventuali controlli per vedere se il libro può essere modificato (copie già in prestito)
+        archivio.modificaLibro(libro);  //...allora modifico il libro nell'archivio
     }
 
     /**
@@ -86,6 +100,9 @@ public class ServizioLibri {
      * prestiti attivi.
      */
     public void eliminaLibro(Libro libro) {
+        if (libro.haPrestitiAttivi())   //se il libro  ha prestiti attivi...
+            throw new IllegalStateException("Impossibile eliminare: libro in prestito");  //lancio l'eccezione
+        archivio.rimuoviLibro(libro);   //...allora rimuovo il libro dall'archivio
     }
 
     /**
@@ -96,7 +113,7 @@ public class ServizioLibri {
      * @return Lista di tutti i libri presenti nel catalogo.
      */
     public List<Libro> listaLibri() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return archivio.listaLibri();   //restituisco l'intera lista di libri
     }
 
     /**
@@ -108,10 +125,13 @@ public class ServizioLibri {
      *
      * @return Lista dei libri trovati.
      *
-     * @see archivi.filtri.FiltroLibro
+     * @see FiltroLibro
      */
     public List<Libro> cercaLibri(InterfacciaFiltro<Libro> filtro) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (filtro == null) //se il filtro è null restituisco l'intera lista (si intende che è desiderata l'intera lista non filtrata)
+            return listaLibri();
+
+        return archivio.cercaLibri(filtro); //retuisco la lista filtrata
     }
 
     /**
@@ -122,7 +142,7 @@ public class ServizioLibri {
      * @return Conteggio titoli.
      */
     public int getLibriTotali() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return archivio.contaLibri();   //restituisco il numero di copie totali
     }
 
     /**
@@ -136,7 +156,12 @@ public class ServizioLibri {
      * @return Somma totale delle copie.
      */
     public int getCopieTotali() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int contatore = 0;  //contatore
+        for (Libro libro : archivio.listaLibri())   //per ogni libro dell'archivio...
+            contatore += libro.getCopieTotali();    //...conto quante copie totali ha
+        
+
+        return contatore;   //restituisco il conteggio
     }
 
     /**
@@ -150,6 +175,11 @@ public class ServizioLibri {
      * @return Somma delle copie disponibili al prestito.
      */
     public int getCopieDisponibili() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int contatore = 0;  //contatore
+        for (Libro libro : archivio.listaLibri())   //per ogni libro dell'archivio...
+            contatore += libro.getCopieDisponibili();    //...conto quante copie disponibili ha
+        
+
+        return contatore;   //restituisco il conteggio
     }
 }
