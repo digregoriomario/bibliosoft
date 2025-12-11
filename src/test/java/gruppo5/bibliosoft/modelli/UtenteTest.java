@@ -157,6 +157,45 @@ public class UtenteTest {
     }
     
     @Test
+    public void testGetMatricola() { //test di getMatricola(): verifica che restituisca la matricola corretta impostata dal costruttore
+        assertEquals("123", utente.getMatricola(), "La matricola restituita deve essere quella corretta.");
+    }
+
+    @Test
+    public void testGetNome() { //test di getNome(): verifica che restituisca il nome corretto
+        assertEquals("Mario", utente.getNome(), "Il nome restituito deve essere quello iniziale.");
+    }
+
+    @Test
+    public void testSetNome() { //test di setNome(): verifica che il nome venga aggiornato correttamente
+        utente.setNome("Giovanni");
+        assertEquals("Giovanni", utente.getNome(), "Il nome deve essere aggiornato dopo il set.");
+    }
+
+    @Test
+    public void testGetCognome() { //test di getCognome(): verifica che restituisca il cognome corretto
+        assertEquals("Rossi", utente.getCognome(), "Il cognome restituito deve essere quello iniziale.");
+    }
+
+    @Test
+    public void testSetCognome() { //test di setCognome(): verifica che il cognome venga aggiornato correttamente
+        utente.setCognome("Bianchi");
+        assertEquals("Bianchi", utente.getCognome(), "Il cognome deve essere aggiornato dopo il set.");
+    }
+
+    @Test
+    public void testGetEmail() { //test di getEmail(): verifica che restituisca l'email corretta
+        assertEquals("mario.rossi@studenti.unisa.it", utente.getEmail(), "L'email restituita deve essere quella iniziale.");
+    }
+
+    @Test
+    public void testSetEmail() { //test di setEmail(): verifica che l'email venga aggiornata correttamente
+        String nuovaEmail = "nuova.email@test.com";
+        utente.setEmail(nuovaEmail);
+        assertEquals(nuovaEmail, utente.getEmail(), "L'email deve essere aggiornata dopo il set.");
+    }
+    
+    @Test
     public void testGetPrestitiAttivi() { //test di getPrestitiAttivi(): verifica che le modifiche alla lista restituita non alterino i dati interni dell'utente
         utente.aggiungiPrestito(new Prestito(utente, libro, dataInizio, dataPrevista));
         

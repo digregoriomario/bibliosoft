@@ -5,6 +5,10 @@
  */
 package gruppo5.bibliosoft.modelli;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @brief Classe che rappresenta l'entità Libro nel dominio dell'applicazione.
  * @details Questa classe gestisce lo stato di un libro, garantendo la coerenza
@@ -17,13 +21,13 @@ package gruppo5.bibliosoft.modelli;
  * all'atto della creazione )
  * @invariant {@code 0 <= copieDisponibili <= copieTotali}
  */
-public class Libro {
+public class Libro implements Serializable, Comparable<Libro> {
 
     private final String isbn;
 
     private String titolo;
 
-    private List<String> autori;
+    private List<String> autori = new ArrayList<>();
 
     private int annoPubblicazione;
 
@@ -51,17 +55,24 @@ public class Libro {
      * @post copieDisponibili = copieTotali (Tutte le copie sono inizialmente disponibili).
      */
     public Libro(String isbn, String titolo, List<String> autori, int annoPubblicazione, int copieTotali) {
+        this.isbn = isbn;
+        this.titolo = titolo;
+        this.autori = new ArrayList<>(autori);
+        this.annoPubblicazione = annoPubblicazione;
+        this.copieTotali = copieTotali;
+        this.copieDisponibili = copieTotali;
     }
 
     public String getIsbn() {
-        throw new UnsupportedOperationException("Not supported yet.");
+         return isbn;
     }
 
     public String getTitolo() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return titolo;
     }
 
     public void setTitolo(String titolo) {
+        this.titolo = titolo;
     }
 
     /**
@@ -72,7 +83,7 @@ public class Libro {
      * @return Una nuova lista contenente le stringhe degli autori.
      */
     public List<String> getAutori() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new ArrayList<>(autori);
     }
 
     /**
@@ -84,27 +95,35 @@ public class Libro {
      * @param[in] autori La lista degli autori da associare al libro.
      */
     public void setAutori(List<String> autori) {
+        this.autori = new ArrayList<>(autori);
     }
 
     public int getAnnoPubblicazione() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return annoPubblicazione;
     }
 
     public void setAnnoPubblicazione(int annoPubblicazione) {
+        this.annoPubblicazione = annoPubblicazione;
     }
 
     public int getCopieTotali() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return copieTotali;
     }
 
     public void setCopieTotali(int copieTotali) {
+         this.copieTotali = copieTotali;
     }
 
     public int getCopieDisponibili() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return copieDisponibili;
     }
 
     public void setCopieDisponibili(int copieDisponibili) {
+        this.copieDisponibili = copieDisponibili;
+    }
+
+    public int getLibriInPrestito() { 
+        return this.copieTotali - this.copieDisponibili;
     }
 
     /**
@@ -115,7 +134,7 @@ public class Libro {
      * @return true se {@code copieDisponibili > 0} , false altrimenti.
      */
     public boolean isDisponibile() {
-        throw new UnsupportedOperationException("Not supported yet.");
+         return copieDisponibili > 0;
     }
 
     /**
@@ -126,6 +145,7 @@ public class Libro {
      * @return true se {@code copieDisponibili != copieTotali}
      */
     public boolean haPrestitiAttivi() {
+        return copieDisponibili != copieTotali;
     }
 
     /**
@@ -137,7 +157,13 @@ public class Libro {
      * @return true se l'oggetto è un Libro con lo stesso ISBN.
      */
     public boolean equals(Object oggetto) {
-        throw new UnsupportedOperationException("Not supported yet.");
+       if(this == oggetto)
+            return true;
+        
+        if(oggetto == null || getClass() != oggetto.getClass())
+            return false;
+        
+        return isbn.equals(((Libro) oggetto).getIsbn());
     }
 
     /**
@@ -150,8 +176,14 @@ public class Libro {
      *
      * @pre {@code libro != null}
      */
+    
+    @Override
     public int compareTo(Libro libro) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(isbn.compareToIgnoreCase(libro.getIsbn()) == 0)
+            return 0;
+        
+        int cmp = titolo.compareToIgnoreCase(libro.getTitolo());
+        return (cmp != 0)? cmp : isbn.compareToIgnoreCase(libro.getIsbn());
     }
 
     /**
@@ -165,6 +197,14 @@ public class Libro {
      * @pre {@code filtroAutore != null}
      */
     public boolean contieneAutore(String filtroAutore) {
-        throw new UnsupportedOperationException("Not supported yet.");
+       for(String autore : autori)
+            if(autore.toLowerCase().contains(filtroAutore.toLowerCase()))return true;
+        
+        return false;
+    }
+    
+     @Override
+    public String toString() {
+        return titolo + " (" + isbn + ")";
     }
 }

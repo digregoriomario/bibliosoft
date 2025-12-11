@@ -22,7 +22,7 @@ public class PrestitoTest {
     }
 
     @Test
-    public void testCostruttore1() { //test del costruttore: verifica corretta inizializzazione (ID, Stato, Date)
+    public void testCostruttore() { //test del costruttore: verifica corretta inizializzazione (ID, Stato, Date)
         assertNotNull(prestito.getId(), "L'ID deve essere generato e non null.");
         assertEquals(StatoPrestito.IN_CORSO, prestito.getStato(), "Lo stato iniziale deve essere IN_CORSO.");
         assertEquals(dataPrevista, prestito.getDataPrevista(), "La data prevista deve corrispondere.");
@@ -130,5 +130,62 @@ public class PrestitoTest {
         assertTrue(p1.compareTo(p2) < 0);
         assertTrue(p2.compareTo(p3) < 0);
         assertTrue(p1.compareTo(p3) < 0, "Proprietà transitiva violata.");
+    }
+    
+    @Test
+    public void testGetId() { //test di getId(): verifica che restituisca una stringa valida non nulla
+        assertNotNull(prestito.getId(), "L'ID restituito non deve essere null.");
+        assertFalse(prestito.getId().isEmpty(), "L'ID restituito non deve essere vuoto.");
+    }
+
+    @Test
+    public void testGetUtente() { //test di getUtente(): verifica che restituisca l'oggetto Utente corretto associato al prestito
+        assertEquals(utente, prestito.getUtente(), "L'utente restituito deve corrispondere a quello passato al costruttore.");
+    }
+
+    @Test
+    public void testGetLibro() { //test di getLibro(): verifica che restituisca l'oggetto Libro corretto associato al prestito
+        assertEquals(libro, prestito.getLibro(), "Il libro restituito deve corrispondere a quello passato al costruttore.");
+    }
+
+    @Test
+    public void testGetDataInizio() { //test di getDataInizio(): verifica che restituisca la data di inizio corretta
+        assertEquals(dataInizio, prestito.getDataInizio(), "La data di inizio deve corrispondere a quella impostata nel costruttore.");
+    }
+
+    @Test
+    public void testGetDataPrevista() { //test di getDataPrevista(): verifica che restituisca la data prevista di restituzione corretta
+        assertEquals(dataPrevista, prestito.getDataPrevista(), "La data prevista deve corrispondere a quella impostata nel costruttore.");
+    }
+
+    @Test
+    public void testGetDataRestituzioneEffettiva() { //test di getDataRestituzioneEffettiva(): verifica che inizialmente sia null
+        assertNull(prestito.getDataRestituzioneEffettiva(), "La data di restituzione effettiva deve essere null appena creato il prestito.");
+    }
+
+    @Test
+    public void testSetDataRestituzioneEffettiva() { //test di setDataRestituzioneEffettiva(): verifica che il setter aggiorni correttamente la data
+        LocalDate dataRestituzione = LocalDate.now().plusDays(3);
+        prestito.setDataRestituzioneEffettiva(dataRestituzione);
+        
+        assertEquals(dataRestituzione, prestito.getDataRestituzioneEffettiva(), "La data di restituzione effettiva deve essere aggiornata dopo il set.");
+    }
+
+    @Test
+    public void testGetStato() { //test di getStato(): verifica che restituisca lo stato corrente (inizialmente IN_CORSO)
+        assertEquals(StatoPrestito.IN_CORSO, prestito.getStato(), "getStato deve restituire lo stato corrente.");
+    }
+
+   @Test
+    public void testSetStato() { //test di setStato(): verifica che il setter modifichi correttamente lo stato del prestito tra quelli ammessi
+  
+        prestito.setStato(StatoPrestito.IN_RITARDO);
+        assertEquals(StatoPrestito.IN_RITARDO, prestito.getStato(), "setStato deve aggiornare lo stato a IN_RITARDO.");
+        
+        prestito.setStato(StatoPrestito.CONCLUSO);
+        assertEquals(StatoPrestito.CONCLUSO, prestito.getStato(), "setStato deve aggiornare lo stato a CONCLUSO.");
+
+        prestito.setStato(StatoPrestito.IN_CORSO);
+        assertEquals(StatoPrestito.IN_CORSO, prestito.getStato(), "setStato deve aggiornare lo stato a IN_CORSO.");
     }
 }

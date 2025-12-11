@@ -181,6 +181,74 @@ public class LibroTest {
         assertTrue(libro.contieneAutore(""), "La ricerca dobrebbe uscire true");
     }
     
+@Test
+    public void testGetIsbn() { //test di getIsbn(): controlla che restituisca l'ISBN corretto impostato dal costruttore
+        Libro libro = new Libro("978-88-0000", "Titolo Test", List.of("Autore"), 2024, 10);
+        
+        assertEquals("978-88-0000", libro.getIsbn(), "getIsbn dovrebbe restituire l'ISBN corretto.");
+    }
+
+    @Test
+    public void testGetTitolo() { //test di getTitolo(): controlla che restituisca il titolo corretto
+        Libro libro = new Libro("12345", "Titolo Iniziale", List.of("Autore"), 2024, 10);
+        
+        assertEquals("Titolo Iniziale", libro.getTitolo(), "getTitolo dovrebbe restituire il titolo impostato nel costruttore.");
+    }
+
+    @Test
+    public void testSetTitolo() { //test di setTitolo(): controlla se il titolo viene aggiornato correttamente
+        Libro libro = new Libro("12345", "Titolo Iniziale", List.of("Autore"), 2024, 10);
+        libro.setTitolo("Titolo Modificato");
+        
+        assertEquals("Titolo Modificato", libro.getTitolo(), "setTitolo dovrebbe aggiornare il titolo.");
+    }
+
+    @Test
+    public void testGetAnnoPubblicazione() { //test di getAnnoPubblicazione(): controlla che restituisca l'anno di pubblicazione corretto
+        Libro libro = new Libro("12345", "Titolo", List.of("Autore"), 2020, 10);
+        
+        assertEquals(2020, libro.getAnnoPubblicazione(), "getAnnoPubblicazione dovrebbe restituire l'anno corretto.");
+    }
+
+    @Test
+    public void testSetAnnoPubblicazione() { //test di setAnnoPubblicazione(): controlla se l'anno di pubblicazione viene aggiornato correttamente
+        Libro libro = new Libro("12345", "Titolo", List.of("Autore"), 2020, 10);
+        libro.setAnnoPubblicazione(1999);
+        
+        assertEquals(1999, libro.getAnnoPubblicazione(), "setAnnoPubblicazione dovrebbe aggiornare l'anno.");
+    }
+
+    @Test
+    public void testGetCopieTotali() { //test di getCopieTotali(): controlla che restituisca il numero corretto di copie totali
+        Libro libro = new Libro("12345", "Titolo", List.of("Autore"), 2020, 5);
+        
+        assertEquals(5, libro.getCopieTotali(), "getCopieTotali dovrebbe restituire il numero iniziale.");
+    }
+
+    @Test
+    public void testSetCopieTotali() { //test di setCopieTotali(): controlla se il numero di copie totali viene aggiornato correttamente
+        Libro libro = new Libro("12345", "Titolo", List.of("Autore"), 2020, 5);
+        libro.setCopieTotali(10);
+        
+        assertEquals(10, libro.getCopieTotali(), "setCopieTotali dovrebbe aggiornare il numero totale di copie.");
+    }
+
+    @Test
+    public void testGetCopieDisponibili() { //test di getCopieDisponibili(): controlla che restituisca il numero corretto di copie disponibili
+        Libro libro = new Libro("12345", "Titolo", List.of("Autore"), 2020, 3);
+        
+        assertEquals(3, libro.getCopieDisponibili(), "getCopieDisponibili dovrebbe essere inizializzato pari alle copie totali.");
+    }
+
+    @Test
+    public void testSetCopieDisponibili() { //test di setCopieDisponibili(): controlla se il numero di copie disponibili viene aggiornato correttamente
+        Libro libro = new Libro("12345", "Titolo", List.of("Autore"), 2020, 5);
+        libro.setCopieDisponibili(2); 
+        
+        assertEquals(2, libro.getCopieDisponibili(), "setCopieDisponibili dovrebbe aggiornare il numero di copie disponibili.");
+    }
+    
+    
    @Test
     public void testGetAutori() { //test di getAutori(): controlla che le modifiche alla lista restituita non alterino i dati interni del libro
         Libro libro = new Libro("1234567890", "Titolo", List.of("Mario Rossi"), 2020, 5);
@@ -205,11 +273,34 @@ public class LibroTest {
     }
     
     @Test
+    public void testGetLibriInPrestito1() { //test di getLibriInPrestito(): verifica che restituisca 0 se non ci sono prestiti
+        Libro libro = new Libro("12345", "Titolo", List.of("Autore"), 2020, 5);
+        
+        assertEquals(0, libro.getLibriInPrestito(), "Se nessuno ha preso il libro, i prestiti devono essere 0.");
+    }
+
+    @Test
+    public void testGetLibriInPrestito2() { //test di getLibriInPrestito(): verifica il calcolo corretto con alcuni libri in prestito
+        Libro libro = new Libro("12345", "Titolo", List.of("Autore"), 2020, 10);
+        libro.setCopieDisponibili(7); 
+        
+        assertEquals(3, libro.getLibriInPrestito(), "Dovrebbe restituire la differenza tra totali e disponibili.");
+    }
+
+    @Test
+    public void testGetLibriInPrestito3() { //test di getLibriInPrestito(): verifica il calcolo quando tutte le copie sono in prestito
+        Libro libro = new Libro("12345", "Titolo", List.of("Autore"), 2020, 5);
+        libro.setCopieDisponibili(0); 
+        
+        assertEquals(5, libro.getLibriInPrestito(), "Se le copie disponibili sono 0, i prestiti devono essere pari alle copie totali.");
+    }
+    
+    @Test
     public void testToString() { //test del toString(): verifica che la stringa generata sia nel formato corretto, ovvero Titolo + ISBN
         Libro libro = new Libro("1234567890", "Il Signore degli Anelli", List.of("Tolkien"), 1954, 5);
         
         String aspettato = "Il Signore degli Anelli (1234567890)";
         
         assertEquals(aspettato, libro.toString(), "Il formato del toString non è corretto.");
-    }
+    }  
 }
