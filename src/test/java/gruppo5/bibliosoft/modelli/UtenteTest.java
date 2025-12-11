@@ -25,7 +25,7 @@ public class UtenteTest {
     
     @Test
     public void testCostruttore() { //test del costruttore: controlla se l'utente viene inizializzato senza prestiti
-        assertFalse(utente.haPrestitiAttivi(), "Un nuovo utente non dovrebbe avere prestiti attivi."); //Chiedere a mario se aggiungere pure i nome uguale a nome e così via
+        assertFalse(utente.haPrestitiAttivi(), "Un nuovo utente non dovrebbe avere prestiti attivi.");
     }
     
     @Test
@@ -154,5 +154,24 @@ public class UtenteTest {
         assertTrue(utente3.compareTo(utente2) < 0, "utente3 dovrebbe venire prima di utente2.");
         assertTrue(utente3.compareTo(utente1) < 0, "utente3 dovrebbe venire prima di utente1.");
         assertTrue(utente2.compareTo(utente1) < 0, "utente2 dovrebbe venire prima di utente1.");
+    }
+    
+    @Test
+    public void testGetPrestitiAttivi() { //test di getPrestitiAttivi(): verifica che le modifiche alla lista restituita non alterino i dati interni dell'utente
+        utente.aggiungiPrestito(new Prestito(utente, libro, dataInizio, dataPrevista));
+        
+        List<Prestito> listaEsterna = utente.getPrestitiAttivi();
+        
+        listaEsterna.clear();
+
+        assertEquals(1, utente.getPrestitiAttivi().size(), "La lista interna dell'utente non deve subire modifiche se cambio quella restituita.");
+    }
+
+    @Test
+    public void testToString() { //test del toString(): verifica che la stringa rispetti il formato corretto, ovvere Cognome + Nome + (Matricola)
+        String risultato = utente.toString();
+        String aspettato = "Rossi Mario (123)";
+
+        assertEquals(aspettato, risultato, "Il formato del toString non è corretto.");
     }
 }

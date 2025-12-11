@@ -1,5 +1,6 @@
 package gruppo5.bibliosoft.modelli;
 
+import java.util.ArrayList;
 import org.junit.jupiter.api.*;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -178,5 +179,37 @@ public class LibroTest {
         Libro libro = new Libro("1111111111", "Titolo A", List.of("Umberto Eco"), 2020, 5);
 
         assertTrue(libro.contieneAutore(""), "La ricerca dobrebbe uscire true");
+    }
+    
+   @Test
+    public void testGetAutori() { //test di getAutori(): controlla che le modifiche alla lista restituita non alterino i dati interni del libro
+        Libro libro = new Libro("1234567890", "Titolo", List.of("Mario Rossi"), 2020, 5);
+        List<String> listaOttenuta = libro.getAutori();
+
+        listaOttenuta.add("Autore Falso"); 
+
+        assertFalse(libro.contieneAutore("Autore Falso"), "L'autore aggiunto alla lista esterna non dovrebbe risultare nel libro.");
+    }
+
+    @Test
+    public void testSetAutori() { //test di setAutori(): verifica l'incapsulamento, modificare la lista originale dopo il set non deve cambiare il libro
+        ArrayList<String> listaEsterna = new ArrayList<>();
+        listaEsterna.add("Mario Rossi");
+
+        Libro libro = new Libro("1234567890", "Titolo", List.of("Umberto Eco"), 2020, 5);
+        libro.setAutori(listaEsterna);
+
+        listaEsterna.add("Autore Falso"); 
+
+        assertFalse(libro.contieneAutore("Autore Falso"), "Il libro non dovrebbe contenere autori aggiunti successivamente.");
+    }
+    
+    @Test
+    public void testToString() { //test del toString(): verifica che la stringa generata sia nel formato corretto, ovvero Titolo + ISBN
+        Libro libro = new Libro("1234567890", "Il Signore degli Anelli", List.of("Tolkien"), 1954, 5);
+        
+        String aspettato = "Il Signore degli Anelli (1234567890)";
+        
+        assertEquals(aspettato, libro.toString(), "Il formato del toString non è corretto.");
     }
 }
