@@ -64,10 +64,25 @@ public class Libro {
     public void setTitolo(String titolo) {
     }
 
+    /**
+     * @brief Restituisce la lista degli autori.
+     * @details Fornisce una copia della lista per preservare l'incapsulamento:
+     * le modifiche apportate alla lista restituita non avranno effetto sul libro.
+     * 
+     * @return Una nuova lista contenente le stringhe degli autori.
+     */
     public List<String> getAutori() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * @brief Imposta la lista degli autori.
+     * @details Memorizza una copia indipendente della lista passata.
+     * Questo garantisce che eventuali modifiche future alla lista originale
+     * non cambino gli autori memorizzati in questo libro.
+     * 
+     * @param[in] autori La lista degli autori da associare al libro.
+     */
     public void setAutori(List<String> autori) {
     }
 
