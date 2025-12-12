@@ -5,6 +5,12 @@
  */
 package gruppo5.bibliosoft.servizi;
 
+import gruppo5.bibliosoft.archivi.Archivio;
+import gruppo5.bibliosoft.archivi.filtri.FiltroUtente;
+import gruppo5.bibliosoft.modelli.Utente;
+import gruppo5.bibliosoft.strumenti.Validatore;
+import java.util.List;
+
 /**
  * @brief Gestisce la logica di business relativa agli Utenti (RF 3.1.2 -
  * Gestione utenti).
@@ -16,7 +22,7 @@ package gruppo5.bibliosoft.servizi;
  */
 public class ServizioUtenti {
 
-    private final Archivio archivio;
+    private final Archivio archivio;    //attributo archivio
 
     /**
      * @brief Costruttore del servizio utenti.
@@ -27,6 +33,7 @@ public class ServizioUtenti {
      * @post Attributi correttamente inizializzati.
      */
     public ServizioUtenti(Archivio archivio) {
+        this.archivio = archivio;
     }
 
     /**
@@ -49,6 +56,9 @@ public class ServizioUtenti {
      * @see Validatore
      */
     public void aggiungiUtente(Utente utente) {
+        Validatore.validaUtente(utente);    //se il validatore valida l'utetene (tutti i parametri sono validi)...
+        //aggiungi eventuali controlli per vedere se l'utente può essere aggiunto  (nulla penso)
+        archivio.aggiungiUtente(utente);    //...allora aggiungo l'utente all'archivio
     }
 
     /**
@@ -66,6 +76,9 @@ public class ServizioUtenti {
      * @throws IllegalArgumentException Se i nuovi dati non sono validi.
      */
     public void modificaUtente(Utente utente) {
+        Validatore.validaUtente(utente);    //se il validatore valida l'utetene (tutti i parametri sono validi)...
+        //aggiungi eventuali controlli per vedere se l'utente può essere modificato (nulla penso)
+        archivio.modificaUtente(utente);    //...allora modifico l'utente sull'archivio
     }
 
     /**
@@ -86,6 +99,10 @@ public class ServizioUtenti {
      * vincolo).
      */
     public void eliminaUtente(Utente utente) {
+        if (utente.haPrestitiAttivi())  //se l'utente ha prestiti attivi...
+            throw new IllegalStateException("Utente con prestiti attivi: eliminazione negata"); //...lancio un'eccezione di tipo IllegalStateException
+        
+        archivio.rimuoviUtente(utente); //rimuovo l'utente dall'archivio
     }
 
     /**
@@ -96,7 +113,7 @@ public class ServizioUtenti {
      * @return Lista di tutti gli utenti registrati.
      */
     public List<Utente> listaUtenti() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return archivio.listaUtenti();  //prendo l'intera lista dei prestiti dall'archivio
     }
 
     /**
@@ -111,7 +128,7 @@ public class ServizioUtenti {
      * @see FiltroUtente
      */
     public List<Utente> cerca(String filtro) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return archivio.cercaUtenti(FiltroUtente.ricerca(filtro));  //chiedo all'archivio di cercare tramite il filtro
     }
 
     /**
@@ -122,7 +139,7 @@ public class ServizioUtenti {
      * @return Conteggio utenti.
      */
     public int getUtentiTotali() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return archivio.contaUtenti();  //chiedo all'archivio di contare tutti gli utenti
     }
 
     /**
@@ -135,6 +152,6 @@ public class ServizioUtenti {
      * @see FiltroUtente
      */
     public int getUtentiAttivi() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return archivio.cercaUtenti(FiltroUtente.ricercaUtentiAttivi()).size(); //chiedo all'archivio di cercare gli utenti attivi (quindi con prestiti "IN_CORSO" o "IN_RITARDO") e li conto
     }
 }

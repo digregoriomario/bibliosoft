@@ -128,9 +128,6 @@ public class ServizioLibri {
      * @see FiltroLibro
      */
     public List<Libro> cercaLibri(InterfacciaFiltro<Libro> filtro) {
-        if (filtro == null) //se il filtro è null restituisco l'intera lista (si intende che è desiderata l'intera lista non filtrata)
-            return listaLibri();
-
         return archivio.cercaLibri(filtro); //retuisco la lista filtrata
     }
 

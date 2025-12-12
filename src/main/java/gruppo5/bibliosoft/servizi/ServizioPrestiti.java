@@ -5,6 +5,13 @@
  */
 package gruppo5.bibliosoft.servizi;
 
+import gruppo5.bibliosoft.archivi.Archivio;
+import gruppo5.bibliosoft.archivi.filtri.InterfacciaFiltro;
+import gruppo5.bibliosoft.archivi.filtri.FiltroPrestito;
+import gruppo5.bibliosoft.modelli.*;
+import java.time.LocalDate;
+import java.util.List;
+
 /**
  * @brief Gestisce la logica di business relativa ai Prestiti (RF 3.1.3 -
  * Gestione Prestiti).
@@ -15,8 +22,8 @@ package gruppo5.bibliosoft.servizi;
  * @invariant {@code archivio != null}
  */
 public class ServizioPrestiti {
-
-    private final Archivio archivio;
+    public static final int MAX_PRESTITI_ATTIVI = 3;    //attributo costante statico che contiene il numero di prestiti attivi massimo per un utente
+    private final Archivio archivio;    //attributo archivio
 
     /**
      * @brief Costruttore del servizio prestiti.
@@ -27,6 +34,7 @@ public class ServizioPrestiti {
      * @post attributi correttamente inizializzati.
      */
     public ServizioPrestiti(Archivio archivio) {
+        this.archivio = archivio;
     }
 
     /**
@@ -50,8 +58,19 @@ public class ServizioPrestiti {
      * @throws IllegalStateException Se l'utente ha troppi prestiti o il libro
      * non è disponibile.
      */
-    public Prestito registraPrestito(Utente utente, Libro libro, LocalDate dataPrevista) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void registraPrestito(Utente utente, Libro libro, LocalDate dataPrevista) {
+        if(utente.getPrestitiAttivi().size() >= MAX_PRESTITI_ATTIVI)  //se l'utente ha raggiunto il numero di prestiti attivi massimo o più...
+            throw new IllegalStateException("L'utente ha già " + MAX_PRESTITI_ATTIVI +" prestiti attivi");   //...lancio l'eccezione di tipo IllegalStateException
+        
+        if(! libro.isDisponibile()) //se il libro non è disponibile...
+            throw new IllegalStateException("Copie non disponibili");   //...lancio l'eccezione di tipo IllegalStateException
+        
+
+        Prestito prestito = new Prestito(utente, libro, LocalDate.now(), dataPrevista); //creo l'istanza di Prestito con i parametri
+        archivio.aggiungiPrestito(prestito);    //aggiungo il prestito all'archivio
+
+        libro.setCopieDisponibili(libro.getCopieDisponibili() - 1); //decremento il numero di copie disponibili relative a quello specifo libro
+        utente.aggiungiPrestito(prestito);  //aggiungo il prestito alla lista dei prestiti attivi del relativo utente (l'utente che ha effettuato il prestito)
     }
 
     /**
@@ -75,6 +94,14 @@ public class ServizioPrestiti {
      * @throws IllegalStateException Se il prestito è già concluso.
      */
     public void registraRestituzione(Prestito prestito) {
+        if (prestito.getStato() == StatoPrestito.CONCLUSO)  //se lo stato del prestito è gia "CONCLUSO"...
+            throw new IllegalStateException("Prestito concluso");   //...allora lancio l'eccezione di tipo IllegalStateException
+
+        prestito.setDataRestituzioneEffettiva(LocalDate.now()); //registro la data di restituzione effettiva come oggi
+        prestito.setStato(StatoPrestito.CONCLUSO);  //imposto lo stato del prestito su "CONCLUSO"
+        prestito.getLibro().setCopieDisponibili(prestito.getLibro().getCopieDisponibili() + 1);  //incremento il numero di copie disponibili relative a quello specifo libro
+        prestito.getUtente().rimuoviPrestito(prestito); //rimuovo il prestito dalla lista dei prestiti attivi del relativo utente
+        archivio.modificaPrestito(prestito);    //per poter registrare le modifiche effettive devo modificare il prestito nell'archivio
     }
 
     /**
@@ -87,6 +114,11 @@ public class ServizioPrestiti {
      * @post I prestiti scaduti vengono impostati allo stato IN_RITARDO.
      */
     public void aggiornaRitardi() {
+        LocalDate oggi = LocalDate.now();   //prendo la data di oggi
+        for(Prestito prestito : archivio.cercaPrestiti(FiltroPrestito.filtraAttivi())){ //per ogni prestito prendendo dall'archivio solo quelli attivi (quindi sia "IN_CORSO" e "IN_RITARDO")...
+            prestito.aggiornaStato(oggi);   //...aggiorno lo stato passando la data di oggi
+            archivio.modificaPrestito(prestito);    //...registro le eventuali modifiche allo stato
+        }
     }
 
     /**
@@ -97,7 +129,8 @@ public class ServizioPrestiti {
      * @return Lista di tutti i prestiti presenti in archivio.
      */
     public List<Prestito> lista() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        aggiornaRitardi();  //prima di fornire la lista devo aggiornare i ritardi dei singoli prestiti
+        return archivio.listaPrestiti();    //restituisco l'intera lista dei prestiti presa dall'archivio
     }
 
     /**
@@ -109,7 +142,7 @@ public class ServizioPrestiti {
      * @see archivi.filtri.FiltroPrestito
      */
     public List<Prestito> cerca(InterfacciaFiltro<Prestito> filtro) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return archivio.cercaPrestiti(filtro);  //restituisco la ricerca fatta dall'archivio tramite il filtro passato come parametro
     }
 
     /**
@@ -121,7 +154,7 @@ public class ServizioPrestiti {
      * @return Lista dei prestiti associati alla matricola dell'utente.
      */
     public List<Prestito> storico(Utente utente) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return archivio.cercaPrestiti(FiltroPrestito.ricercaMatricola(utente.getMatricola())); //restituisco tutti i prestiti (di tutti e 3 i possibili stati) cercando nell'archivio tramite il filtro per matricola dell'utente
     }
 
     /**
@@ -132,7 +165,7 @@ public class ServizioPrestiti {
      * @return Numero di prestiti scaduti.
      */
     public int getPrestitiInRitardo() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return archivio.cercaPrestiti(FiltroPrestito.filtraInRitardo()).size(); //restituisco il numero di prestiti in ritardo cercando nell'archivio
     }
 
     /**
@@ -143,7 +176,7 @@ public class ServizioPrestiti {
      * @return Numero di prestiti nello storico.
      */
     public int getPrestitiConclusi() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return archivio.cercaPrestiti(FiltroPrestito.filtraConclusi()).size(); //restituisco il numero di prestiti conclusi cercando nell'archivio
     }
 
     /**
@@ -154,6 +187,6 @@ public class ServizioPrestiti {
      * @return Numero di prestiti regolarmente in corso.
      */
     public int getPrestitiInCorso() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return archivio.cercaPrestiti(FiltroPrestito.filtraInCorso()).size(); //restituisco il numero di prestiti in corso cercando nell'archivio
     }
 }
