@@ -5,6 +5,8 @@
  */
 package gruppo5.bibliosoft.archivi.filtri;
 
+import gruppo5.bibliosoft.modelli.Prestito;
+
 /**
  * @brief Classe di utilità per la creazione di filtri applicabili ai Prestiti.
  * @details Permette di filtrare i prestiti in base al loro stato (Concluso, In

@@ -14,7 +14,7 @@ package gruppo5.bibliosoft.archivi.filtri;
  *
  * @tparam T Il tipo di oggetto da filtrare (es. Libro, Utente, Prestito).
  */
-public interface InterfacciaFiltro {
+public interface InterfacciaFiltro<T> {
 
     /**
      * @brief Valuta se un elemento soddisfa i criteri del filtro.
