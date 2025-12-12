@@ -32,7 +32,7 @@ public class FiltroUtente {
             return l -> true; 
         }
         // Filtraggio
-        return l-> l.getMatricola().equalsIgnoreCase(matricola); //controlla per matricola
+        return l-> l.getMatricola().equals(matricola); //controlla per matricola
     }
 
     /**

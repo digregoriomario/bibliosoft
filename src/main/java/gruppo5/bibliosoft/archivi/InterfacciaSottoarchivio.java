@@ -5,6 +5,9 @@
  */
 package gruppo5.bibliosoft.archivi;
 
+import gruppo5.bibliosoft.archivi.filtri.InterfacciaFiltro;
+import java.util.List;
+
 /**
  * @brief Interfaccia generica per la gestione di un sotto-archivio.
  * @details Definisce le operazioni di aggiunta, modifica, rimuovi fondamentali
@@ -21,7 +24,7 @@ public interface InterfacciaSottoarchivio<T> {
      * @details
      * @param[in] elemento L'elemento da inserire. Non deve essere null.
      *
-     * @pre {@code elemento non deve essere null}
+     * @pre {@code elemento != null}
      * @pre L'elemento non deve essere già presente nell'archivio.
      * @post L'archivio contiene l'elemento aggiunto.
      *
@@ -38,12 +41,12 @@ public interface InterfacciaSottoarchivio<T> {
      *
      * @param[in] elemento L'elemento da aggiornare.
      *
-     * @pre {@code elemento diverso da null}
+     * @pre {@code elemento != null}
      * @pre L'elemento deve esistere nell'archivio.
      * @post L'elemento nell'archivio è aggiornato con i nuovi dati.
      *
-     * @throws java.util.NoSuchElementException Se l'elemento da modificare non
-     * esiste.
+     * @throws java.util.NoSuchElementException Se l'elemento da modificare non esiste.
+     * @throws NullPointerException Se l'elemento è null.
      */
     void modifica(T elemento);
 
@@ -52,12 +55,12 @@ public interface InterfacciaSottoarchivio<T> {
      * @details
      * @param[in] elemento L'elemento da rimuovere.
      *
-     * @pre {@code elemento diverso da null}
+     * @pre {@code elemento != null}
      * @pre L'elemento deve essere presente nell'archivio.
      * @post L'archivio non contiene più l'elemento specificato.
      *
-     * @throws java.util.NoSuchElementException Se l'elemento da rimuovere non
-     * esiste.
+     * @throws java.util.NoSuchElementException Se l'elemento da rimuovere non esiste.
+     * @throws NullPointerException Se l'elemento è null.
      */
     void rimuovi(T elemento);
 

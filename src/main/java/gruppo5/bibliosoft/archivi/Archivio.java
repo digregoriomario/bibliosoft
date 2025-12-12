@@ -5,6 +5,12 @@
  */
 package gruppo5.bibliosoft.archivi;
 
+import gruppo5.bibliosoft.archivi.filtri.InterfacciaFiltro;
+import gruppo5.bibliosoft.modelli.Libro;
+import gruppo5.bibliosoft.modelli.Prestito;
+import gruppo5.bibliosoft.modelli.Utente;
+import java.util.List;
+
 /**
  * @brief Classe principale per la gestione dell'archivio della biblioteca.
  * @details Agisce da facciata per i sotto-archivi di Libri, Utenti e Prestiti,
@@ -13,12 +19,20 @@ package gruppo5.bibliosoft.archivi;
  * @invariant {@code libri != null}
  * @invariant {@code utenti != null}
  * @invariant {@code prestiti != null}
+ * @invariant Nessun libro presente due volte (verifica su ISBN).
+ * @invariant Nessun utente presente due volte (verifica su matricola).
  */
 public class Archivio {
-    private final Sottoarchivio<Libro> libri;
-    private final Sottoarchivio<Utente> utenti;
-    private final Sottoarchivio<Prestito> prestiti;
+    private final Sottoarchivio<Libro> libri = new Sottoarchivio<>(); //Inizializzo il sottoarchivio libro
+    private final Sottoarchivio<Utente> utenti = new Sottoarchivio<>(); //Inizializzo il sottoarchivio utente
+    private final Sottoarchivio<Prestito> prestiti = new Sottoarchivio<>(); //Inizializzo il sottoarchivio prestito
 
+    
+    
+    // GESTIONE LIBRO
+    
+    
+    
     /**
      * @brief Aggiunge un nuovo libro all'archivio.
      * @details Implementa il caso d'uso "Inserimento nuovo libro" (UC3).
@@ -29,6 +43,7 @@ public class Archivio {
      * @post L'archivio contiene l'elemento aggiunto.
      */
     public void aggiungiLibro(Libro libro) {
+        libri.aggiungi(libro);
     }
 
     /**
@@ -42,6 +57,7 @@ public class Archivio {
      * @post Il libro nell'archivio è aggiornato con i nuovi dati.
      */
     public void modificaLibro(Libro libro) {
+        libri.modifica(libro);
     }
 
     /**
@@ -52,9 +68,11 @@ public class Archivio {
      *
      * @pre {@code libro != null}
      * @pre Il libro deve essere presente nell'archivio.
+     * @pre Nessun prestito attivo associato a questo libro
      * @post L'archivio non contiene più il libro specificato.
      */
     public void rimuoviLibro(Libro libro) {
+        libri.rimuovi(libro);
     }
 
     /**
@@ -65,21 +83,20 @@ public class Archivio {
      * @post {@code risultato != null}
      */
     public List<Libro> listaLibri() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return libri.lista();
     }
 
     /**
      * @brief Cerca libri in base a un filtro specifico.
-     * @details Implementa il requisito funzionale 3.1.1.5 "Ricerca".
+     * @details Implementa il requisito funzionale 3.1.1.5 "Ricerca"e il caso d'uso "Ricerca libro" (UC6).
      *
-     * @param[in] filtro Il filtro da applicare. Se null restituisce tutti i
-     * libri.
+     * @param[in] filtro Il filtro da applicare. Se null restituisce tutti ilibri.
      *
      * @return Lista dei libri trovati che soddisfano il filtro.
      * @post {@code risultato != null}
      */
     public List<Libro> cercaLibri(InterfacciaFiltro<Libro> filtro) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return libri.cerca(filtro);
     }
 
     /**
@@ -90,9 +107,14 @@ public class Archivio {
      * @post {@code risultato >= 0}
      */
     public int contaLibri() {
-        throw new UnsupportedOperationException("Not supported yet.");
+         return libri.conta();
     }
 
+    
+    
+    // GESTIONE UTENTE
+    
+    
     /**
      * @brief Registra un nuovo utente nel sistema.
      * @details Implementa il caso d'uso "Inserimento nuovo utente" (UC8).
@@ -101,9 +123,11 @@ public class Archivio {
      *
      * @pre {@code utente != null}
      * @pre L'utente non deve essere già presente (verifica su matricola).
+     * @pre L'e-mail dell'utente deve essere conforme ai requisiti istituzionali (Req. 3.3.2).
      * @post L'archivio contiene l'utente aggiunto.
      */
     public void aggiungiUtente(Utente utente) {
+        utenti.aggiungi(utente);
     }
 
     /**
@@ -117,6 +141,7 @@ public class Archivio {
      * @post L'utente nell'archivio è aggiornato con i nuovi dati.
      */
     public void modificaUtente(Utente utente) {
+        utenti.modifica(utente);
     }
 
     /**
@@ -127,9 +152,11 @@ public class Archivio {
      *
      * @pre {@code utente != null}
      * @pre L'utente deve essere presente nell'archivio.
+     * @pre Nessun prestito attivo o in ritardo associato a questo utente.
      * @post L'archivio non contiene più l'utente specificato.
      */
     public void rimuoviUtente(Utente utente) {
+        utenti.rimuovi(utente);
     }
 
     /**
@@ -140,12 +167,12 @@ public class Archivio {
      * @post {@code risultato >= 0}
      */
     public List<Utente> listaUtenti() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return utenti.lista();
     }
 
     /**
      * @brief Cerca utenti tramite filtro (es matricola, nome).
-     * @details Implementa il requisito funzionale 3.1.2.5 "Ricerca".
+     * @details Implementa il requisito funzionale 3.1.2.5 "Ricerca" e il caso d'uso "Ricerca utente" (UC11).
      *
      * @param[in] filtro Filtro di ricerca utenti.
      *
@@ -153,7 +180,7 @@ public class Archivio {
      * @post {@code risultato >= 0}
      */
     public List<Utente> cercaUtenti(InterfacciaFiltro<Utente> filtro) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return utenti.cerca(filtro);
     }
 
     /**
@@ -163,9 +190,14 @@ public class Archivio {
      * @post {@code risultato >= 0}
      */
     public int contaUtenti() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return utenti.conta();
     }
 
+    
+    
+    //GESTIONE PRESTITI
+    
+    
     /**
      * @brief Registra un nuovo prestito.
      * @details Implementa il caso d'uso "Registrazione prestito" (UC14).
@@ -177,12 +209,12 @@ public class Archivio {
      * @post Aggiunta prestito in archivio.
      */
     public void aggiungiPrestito(Prestito prestito) {
+        prestiti.aggiungi(prestito); 
     }
 
     /**
      * @brief Aggiorna i dati di un prestito.
-     * @details Implementa il caso d'uso "Registrazione restituzione prestito"
-     * (UC15).
+     * @details Implementa il caso d'uso "Registrazione restituzione prestito" (UC15).
      *
      * @param[in] prestito Il prestito da aggiornare.
      *
@@ -191,11 +223,12 @@ public class Archivio {
      * @post Modifica dello stato e della data effettiva del prestito.
      */
     public void modificaPrestito(Prestito prestito) {
+         prestiti.modifica(prestito);
     }
 
     /**
      * @brief Rimuove un record di prestito (non per lo storico).
-     * @details
+     * @details **Non utilizzare questo metodo per la registrazione della restituzione del libro(per quello usare {@code modificaPrestito(Prestito)} e aggiornare lo stato).**
      * @param[in] prestito Il prestito da rimuovere.
      *
      * @pre {@code prestito != null}
@@ -203,37 +236,38 @@ public class Archivio {
      * @post L'archivio non contiene il prestito selezionato.
      */
     public void rimuoviPrestito(Prestito prestito) {
+        prestiti.rimuovi(prestito);
     }
 
     /**
      * @brief Restituisce lo storico completo dei prestiti.
-     * @details
+     * @details Utile per l'analisi e lo storico complessivo.
      * @return Lista di tutti i prestiti (in corso e conclusi).
      * @post {@code risultato >= 0}
      */
     public List<Prestito> listaPrestiti() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return prestiti.lista();
     }
 
     /**
      * @brief Cerca prestiti o filtra per stato (es in ritardo, in corso).
-     * @details
+     * @details Utilizzabile anche per l'implementazione dello "Storico prestiti" (UC13).
      * @param[in] filtro Filtro sui prestiti.
      *
      * @return Lista dei prestiti che soddisfano il criterio.
      * @post {@code risultato >= 0}
      */
     public List<Prestito> cercaPrestiti(InterfacciaFiltro<Prestito> filtro) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return prestiti.cerca(filtro);
     }
 
     /**
      * @brief Conta il numero totale di operazioni di prestito registrate.
-     * @details
+     * @details 
      * @return Conteggio prestiti.
      * @post {@code risultato >= 0}
      */
     public int contaPrestiti() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return prestiti.conta();
     }
 }

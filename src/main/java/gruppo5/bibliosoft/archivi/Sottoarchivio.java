@@ -5,6 +5,12 @@
  */
 package gruppo5.bibliosoft.archivi;
 
+import gruppo5.bibliosoft.archivi.filtri.InterfacciaFiltro;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
 /**
  * @brief Implementazione concreta di un sotto-archivio in memoria.
  * @details Utilizza un TreeSet per mantenere gli elementi ordinati
@@ -14,11 +20,10 @@ package gruppo5.bibliosoft.archivi;
  * @invariant {@code elementi != null}
  * @invariant {@code elementi non contiene duplicati}
  *
- * @tparam T Tipo dell'elemento, deve implementare Comparable per l'ordinamento
- * nel TreeSet.
+ * @tparam T Tipo dell'elemento, deve implementare Comparable per l'ordinamento nel TreeSet.
  * @see InterfacciaSottoarchivio
  */
-public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
+public class Sottoarchivio<T> implements InterfacciaSottoarchivio<T> {
 
     /**
      * @brief Collezione ordinata degli elementi.
@@ -39,6 +44,14 @@ public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
      * @throws NullPointerException se l'elemento è null.
      */
     public void aggiungi(T elemento) {
+        if (elemento == null) { // GESTIONE NULL
+            throw new NullPointerException("Impossibile aggiungere un elemento nullo.");
+        }
+        
+        // Uso il valore di ritorno di add() per verificare l'unicità in modo efficiente
+        if (!elementi.add(elemento)) {
+            throw new IllegalStateException(elemento.getClass().getSimpleName() + " già presente.");
+        }
     }
 
     /**
@@ -49,8 +62,19 @@ public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
      * @pre {@code elemento != null}
      * @pre L'elemento deve essere presente nell'archivio.
      * @post L'archivio non contiene più l'elemento specificato.
+     * 
+     * @throws NoSuchElementException Se l'elemento da rimuovere non esiste.
+     * @throws NullPointerException se l'elemento è null.
      */
     public void rimuovi(T elemento) {
+         if (elemento == null) { // Gestione elemento null
+            throw new NullPointerException("Impossibile rimuovere un elemento nullo.");
+        }
+        
+        // Controllo se l'elemento è stato rimosso (cioè se era presente)
+        if (!elementi.remove(elemento)) {
+            throw new NoSuchElementException(elemento.getClass().getSimpleName() + " non trovato nell'archivio.");
+        }
     }
 
     /**
@@ -64,7 +88,16 @@ public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
      * @post {@code risultato >= 0}
      */
     public List<T> cerca(InterfacciaFiltro<T> filtro) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (filtro == null) { // Gestione filtro null
+            return lista();
+        }
+         List<T> risultati = new ArrayList<>();  //creo una lista per il risultato della ricerca
+        
+        for(T elemento : elementi)  //per ogni elemento della collezzione...
+            if(filtro.filtra(elemento))  //controllo se rispetta il filtro
+                risultati.add(elemento);    //lo aggiungo alla lista dei risultati
+        
+        return risultati;
     }
 
     /**
@@ -74,7 +107,7 @@ public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
      * @post {@code risultato != null}
      */
     public List<T> lista() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new ArrayList<>(elementi);
     }
 
     /**
@@ -85,7 +118,7 @@ public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
      * @post {@code risultato >= 0}
      */
     public int conta() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return elementi.size();
     }
 
     /**
@@ -97,8 +130,23 @@ public class Sottoarchivio implements InterfacciaSottoarchivio<T> {
      * @param[in] elemento L'elemento aggiornato.
      *
      * @pre {@code elemento != null}
+     * @pre L'elemento deve esistere nell'archivio
      * @post L'elemento nell'archivio è aggiornato con i nuovi dati.
+     * 
+     * @throws NoSuchElementException se l'elemento da modificare non esiste.
+     * @throws NullPointerException se l'elemento è null.
      */
     public void modifica(T elemento) {
+        if (elemento == null) { // Controllo elemento null
+            throw new NullPointerException("Impossibile modificare un elemento nullo.");
+        }
+
+        // Rimuovo il vecchio oggetto. Se remove ritorna false, l'oggetto non esisteva.
+        if (!elementi.remove(elemento)) {
+             throw new NoSuchElementException(elemento.getClass().getSimpleName() + " non trovato nell'archivio.");
+        }
+
+        //Aggiungo il nuovo oggetto
+        elementi.add(elemento);
     }
 }
