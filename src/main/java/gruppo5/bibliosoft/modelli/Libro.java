@@ -120,7 +120,7 @@ public class Libro implements Serializable, Comparable<Libro> {
         this.copieDisponibili = copieDisponibili;
     }
 
-    public int getLibriInPrestito() { 
+    public int getCopieInPrestito() { 
         return this.copieTotali - this.copieDisponibili;
     }
 

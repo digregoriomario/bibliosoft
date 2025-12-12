@@ -272,27 +272,27 @@ public class LibroTest {
         assertFalse(libro.contieneAutore("Autore Falso"), "Il libro non dovrebbe contenere autori aggiunti successivamente.");
     }
     
-    @Test
-    public void testGetLibriInPrestito1() { //test di getLibriInPrestito(): verifica che restituisca 0 se non ci sono prestiti
+   @Test
+    public void testGetCopieInPrestito1() { // test di getCopieInPrestito(): verifica che restituisca 0 se non ci sono prestiti
         Libro libro = new Libro("12345", "Titolo", List.of("Autore"), 2020, 5);
         
-        assertEquals(0, libro.getLibriInPrestito(), "Se nessuno ha preso il libro, i prestiti devono essere 0.");
+        assertEquals(0, libro.getCopieInPrestito(), "Se nessuno ha preso il libro, i prestiti devono essere 0.");
     }
 
     @Test
-    public void testGetLibriInPrestito2() { //test di getLibriInPrestito(): verifica il calcolo corretto con alcuni libri in prestito
+    public void testGetCopieInPrestito2() { // test di getCopieInPrestito(): verifica il calcolo corretto con alcuni libri in prestito
         Libro libro = new Libro("12345", "Titolo", List.of("Autore"), 2020, 10);
         libro.setCopieDisponibili(7); 
         
-        assertEquals(3, libro.getLibriInPrestito(), "Dovrebbe restituire la differenza tra totali e disponibili.");
+        assertEquals(3, libro.getCopieInPrestito(), "Dovrebbe restituire la differenza tra totali e disponibili.");
     }
 
     @Test
-    public void testGetLibriInPrestito3() { //test di getLibriInPrestito(): verifica il calcolo quando tutte le copie sono in prestito
+    public void testGetCopieInPrestito3() { // test di getCopieInPrestito(): verifica il calcolo quando tutte le copie sono in prestito
         Libro libro = new Libro("12345", "Titolo", List.of("Autore"), 2020, 5);
         libro.setCopieDisponibili(0); 
         
-        assertEquals(5, libro.getLibriInPrestito(), "Se le copie disponibili sono 0, i prestiti devono essere pari alle copie totali.");
+        assertEquals(5, libro.getCopieInPrestito(), "Se le copie disponibili sono 0, i prestiti devono essere pari alle copie totali.");
     }
     
     @Test
