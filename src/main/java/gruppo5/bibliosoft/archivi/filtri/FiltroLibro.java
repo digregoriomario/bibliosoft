@@ -27,7 +27,6 @@ public class FiltroLibro {
      * @param[in] testo La stringa da ricercare.
      * @return Un'istanza di InterfacciaFiltro che restituisce true se trova
      * corrispondenze, false altrimenti.
-     * @pre {@code testo != null}
      */
     public static InterfacciaFiltro<Libro> ricerca(String testo) {
         // Gestione del caso limite: se la stringa è nulla o vuota, non filtra nulla.
