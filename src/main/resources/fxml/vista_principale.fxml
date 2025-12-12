@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gruppo5.bibliosoft.controller.ControllerPrincipale">
+
+    <top>
+        <MenuBar>
+            <menus>
+                <Menu text="Bibliosoft">
+                    <items>
+                        <MenuItem onAction="#onSalvaArchivio" text="Salva archivio" />
+                        <SeparatorMenuItem />
+                        <MenuItem onAction="#chiudiApplicazione" text="Esci" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+
+    <center>
+        <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab fx:id="tabPannelloDiControllo" text="Pannello di controllo" />
+                <Tab fx:id="tabLibri" onSelectionChanged="#cambioTab" text="Libri" />
+                <Tab fx:id="tabUtenti" onSelectionChanged="#cambioTab" text="Utenti" />
+                <Tab fx:id="tabPrestiti" onSelectionChanged="#cambioTab" text="Prestiti" />
+            </tabs>
+        </TabPane>
+    </center>
+</BorderPane>
