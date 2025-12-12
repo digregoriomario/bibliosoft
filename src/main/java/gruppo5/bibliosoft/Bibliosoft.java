@@ -58,10 +58,10 @@ public class Bibliosoft extends Application {
         ServizioPrestiti servizioPrestiti = new ServizioPrestiti(archivio);
         ServizioArchivio servizioArchivio = new ServizioArchivio("archivio.dat", archivio);
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gruppo5/bibliosoft/fxml/main.fxml"));   //carico il file fxml contenente la menubar e le tab
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista_principale.fxml"));   //carico il file fxml contenente la menubar e le tab
         Scene scena = new Scene(loader.load()); //carico la scena
 
-        scena.getStylesheets().add(getClass().getResource("/gruppo5/bibliosoft/css/stile_principale.css").toExternalForm());   //aggiungo il foglio di stile alla scena
+        //scena.getStylesheets().add(getClass().getResource("/css/stile_principale.css").toExternalForm());   //aggiungo il foglio di stile alla scena
 
         ControllerPrincipale controller = loader.getController();   //instanzio il controller principale
         controller.inizializzaServizi(servizioLibri, servizioUtenti, servizioPrestiti, servizioArchivio);   //inizializzo i diversi servizi nel controller principale
@@ -83,10 +83,7 @@ public class Bibliosoft extends Application {
         }
     }
 
-    private static Parent loadFXML(String fxml) throws IOException {    //funzione per caricare i file fxml cercandoli nelle risorse del progetto
-        FXMLLoader fxmlLoader = new FXMLLoader(Bibliosoft.class.getResource(fxml + ".fxml"));
-        return fxmlLoader.load();
-    }
+    
 
     /**
      * @brief Metodo main standard.

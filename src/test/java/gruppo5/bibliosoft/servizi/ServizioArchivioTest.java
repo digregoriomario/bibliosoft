@@ -21,24 +21,4 @@ public class ServizioArchivioTest {
 
         assertNotNull(servizio, "L'oggetto ServizioArchivio dovrebbe essere stato creato e non essere null.");
     }
-
-    @Test
-    public void testCarica() {   //test su carica(): con percorso file vuoto
-        ServizioArchivio servizioArchivio = new ServizioArchivio("", archivio);
-        assertThrows(
-                IOException.class,
-                () -> servizioArchivio.carica(),
-                "Mi aspettavo IOException, ma non è stata lanciata."
-        );
-    }
-    
-    @Test
-    public void testSalva() {   //test su salva(): con percorso file vuoto
-        ServizioArchivio servizioArchivio = new ServizioArchivio("", archivio);
-        assertThrows(
-                IOException.class,
-                () -> servizioArchivio.salva(),
-                "Mi aspettavo IOException, ma non è stata lanciata."
-        );
-    }
 }

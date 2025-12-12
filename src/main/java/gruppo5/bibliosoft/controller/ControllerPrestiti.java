@@ -5,12 +5,28 @@
  */
 package gruppo5.bibliosoft.controller;
 
+import gruppo5.bibliosoft.archivi.filtri.FiltroPrestito;
 import gruppo5.bibliosoft.modelli.Prestito;
 import gruppo5.bibliosoft.servizi.*;
 import gruppo5.bibliosoft.archivi.filtri.InterfacciaFiltro;
+import gruppo5.bibliosoft.modelli.Libro;
+import gruppo5.bibliosoft.modelli.StatoPrestito;
+import gruppo5.bibliosoft.modelli.Utente;
+import java.time.LocalDate;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DateCell;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 /**
  * @brief Controller per la gestione della sezione "Prestiti".
@@ -28,6 +44,7 @@ import javafx.scene.control.Button;
  * @invariant servizioLibri != null
  */
 public class ControllerPrestiti {
+
     /**
      * @brief Strategia di filtro corrente per la visualizzazione della tabella.
      * @details Determina quali prestiti mostrare (Attivi, Conclusi o Tutti)
@@ -35,18 +52,45 @@ public class ControllerPrestiti {
      */
     private InterfacciaFiltro<Prestito> filtroCorrente;
 
+    //servizi per interagire con i dati:
     private ServizioPrestiti servizioPrestiti;
-
     private ServizioUtenti servizioUtenti;
-
     private ServizioLibri servizioLibri;
+
+    //attributi FXML:
+    @FXML
+    private ComboBox<Utente> comboUtente;
+    @FXML
+    private ComboBox<Libro> comboLibro;
+    @FXML
+    private DatePicker dataPrevista;
+    @FXML
+    private TableView<Prestito> tabellaPrestiti;
+    @FXML
+    private TableColumn<Prestito, String> colonnaUtente;
+    @FXML
+    private TableColumn<Prestito, String> colonnaLibro;
+    @FXML
+    private TableColumn<Prestito, LocalDate> colonnaDataInizio;
+    @FXML
+    private TableColumn<Prestito, LocalDate> colonnaDataPrevista;
+    @FXML
+    private TableColumn<Prestito, LocalDate> colonnaDataEffettiva;
+    @FXML
+    private TableColumn<Prestito, StatoPrestito> colonnaStato;
+    @FXML
+    private Button bottoneAttivi;
+    @FXML
+    private Button bottoneConclusi;
+    @FXML
+    private Button bottoneTutti;
 
     /**
      * @brief Lista osservabile che funge da model per la TableView.
      * @details Contiene i dati dei prestiti filtrati e aggiornati, pronti per
      * essere visualizzati secondo RF 3.4.2.
      */
-    private final ObservableList<Prestito> datiPrestiti;
+    private final ObservableList<Prestito> datiPrestiti = FXCollections.observableArrayList();
 
     /**
      * @brief Inizializza i servizi e configura lo stato iniziale della vista.
@@ -63,6 +107,13 @@ public class ControllerPrestiti {
      * @post La tabella è inizializzata e popolata con i dati correnti.
      */
     public void impostaServizi(ServizioPrestiti servizioPrestiti, ServizioUtenti servizioUtenti, ServizioLibri servizioLibri) {
+        this.servizioPrestiti = servizioPrestiti;
+        this.servizioUtenti = servizioUtenti;
+        this.servizioLibri = servizioLibri;
+        inizializzaTabella();
+
+        selezionaFiltro(bottoneAttivi);
+        aggiorna();
     }
 
     /**
@@ -74,6 +125,15 @@ public class ControllerPrestiti {
      * Verde per conclusi).
      */
     private void inizializzaTabella() {
+        colonnaUtente.setCellValueFactory(new PropertyValueFactory<>("utente"));
+        colonnaLibro.setCellValueFactory(new PropertyValueFactory<>("libro"));
+        colonnaDataInizio.setCellValueFactory(new PropertyValueFactory<Prestito, java.time.LocalDate>("dataInizio"));
+        colonnaDataPrevista.setCellValueFactory(new PropertyValueFactory<Prestito, java.time.LocalDate>("dataPrevista"));
+        colonnaDataEffettiva.setCellValueFactory(new PropertyValueFactory<Prestito, java.time.LocalDate>("dataRestituzioneEffettiva"));
+        colonnaStato.setCellValueFactory(new PropertyValueFactory<Prestito, StatoPrestito>("stato"));
+
+        tabellaPrestiti.setPlaceholder(new Label("Nessun prestito presente"));
+        tabellaPrestiti.setItems(datiPrestiti);
     }
 
     /**
@@ -83,7 +143,11 @@ public class ControllerPrestiti {
      *
      * @param[in] event L'evento generato dal click sul bottone.
      */
+    @FXML
     private void mostraAttivi(ActionEvent event) {
+        filtroCorrente = FiltroPrestito.filtraAttivi();
+        selezionaFiltro(bottoneAttivi);
+        aggiorna();
     }
 
     /**
@@ -92,7 +156,11 @@ public class ControllerPrestiti {
      *
      * @param[in] event L'evento generato dal click sul bottone.
      */
+    @FXML
     private void mostraConclusi(ActionEvent event) {
+        filtroCorrente = FiltroPrestito.filtraConclusi();
+        selezionaFiltro(bottoneConclusi);
+        aggiorna();
     }
 
     /**
@@ -100,7 +168,11 @@ public class ControllerPrestiti {
      * @details
      * @param[in] event L'evento generato dal click sul bottone.
      */
+    @FXML
     private void mostraTutti(ActionEvent event) {
+        filtroCorrente = null;
+        selezionaFiltro(bottoneTutti);
+        aggiorna();
     }
 
     /**
@@ -111,6 +183,7 @@ public class ControllerPrestiti {
      * @param[in] attivo Il bottone che è stato appena premuto.
      */
     private void selezionaFiltro(Button attivo) {
+
     }
 
     /**
@@ -120,6 +193,8 @@ public class ControllerPrestiti {
      * esistenti.
      */
     private void aggiornaCombo() {
+        comboUtente.setItems(FXCollections.observableArrayList(servizioUtenti.listaUtenti()));
+        comboLibro.setItems(FXCollections.observableArrayList(servizioLibri.listaLibri()));
     }
 
     /**
@@ -127,6 +202,13 @@ public class ControllerPrestiti {
      * @details Pulisce la selezione delle ComboBox e il DatePicker.
      */
     public void pulisciCampi() {
+        comboUtente.getSelectionModel().clearSelection();
+        comboUtente.setValue(null);
+
+        comboLibro.getSelectionModel().clearSelection();
+        comboLibro.setValue(null);
+
+        dataPrevista.setValue(null);
     }
 
     /**
@@ -141,7 +223,33 @@ public class ControllerPrestiti {
      * @post Se successo: Copie libro decrementate, nuovo prestito in lista.
      * @post Se errore: Viene mostrato un alert all'utente.
      */
+    @FXML
     private void onRegistraPrestito() {
+        Utente utente = comboUtente.getValue();
+        Libro libro = comboLibro.getValue();
+        LocalDate data = dataPrevista.getValue();
+        if (utente == null) {
+            mostraErrore("Seleziona utente");
+            return;
+        }
+
+        if (libro == null) {
+            mostraErrore("Seleziona libro");
+            return;
+        }
+
+        if (data == null) {
+            mostraErrore("Seleziona data di restituzione prevista");
+            return;
+        }
+
+        try {
+            servizioPrestiti.registraPrestito(utente, libro, data);
+            ControllerPrincipale.modificheEffettuate = true;
+            aggiorna();
+        } catch (Exception ex) {
+            mostraErrore(ex.getMessage());
+        }
     }
 
     /**
@@ -154,18 +262,46 @@ public class ControllerPrestiti {
      *
      * @post Se successo: Stato prestito = Concluso, copie libro incrementate.
      */
+    @FXML
     private void onRegistraRestituzione() {
+        Prestito prestito = tabellaPrestiti.getSelectionModel().getSelectedItem();
+        if (prestito == null) {
+            mostraErrore("Seleziona un prestito da restituire.");
+            return;
+        }
+        try {
+            servizioPrestiti.registraRestituzione(prestito);
+            ControllerPrincipale.modificheEffettuate = true;
+            aggiorna();
+        } catch (Exception ex) {
+            mostraErrore(ex.getMessage());
+        }
     }
 
     /**
      * @brief Aggiorna i dati visualizzati e ricalcola i ritardi.
-     * @details Metodo centrale di refresh: 
-     * 1. Invoca il calcolo automatico dei ritardi (RF 3.2.3).
-     * 2. Recupera la lista filtrata dal servizio.
-     * 3. Aggiorna la TableView.
-     * 4. Aggiorna le ComboBox e riconfigura il DatePicker per disabilitare date passate.
+     * @details Metodo centrale di refresh: 1. Invoca il calcolo automatico dei
+     * ritardi (RF 3.2.3). 2. Recupera la lista filtrata dal servizio. 3.
+     * Aggiorna la TableView. 4. Aggiorna le ComboBox e riconfigura il
+     * DatePicker per disabilitare date passate.
      */
     public void aggiorna() {
+        servizioPrestiti.aggiornaRitardi();
+        datiPrestiti.setAll(servizioPrestiti.cerca(filtroCorrente));
+        aggiornaCombo();
+        pulisciCampi();
+
+        dataPrevista.setDayCellFactory(dp -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate elemento, boolean vuoto) {
+                super.updateItem(elemento, vuoto);
+                LocalDate oggi = LocalDate.now();
+                if (elemento != null && (elemento.isBefore(oggi) || elemento.isEqual(oggi))) {
+                    setDisable(true);
+                }
+
+            }
+        });
     }
 
     /**
@@ -177,5 +313,9 @@ public class ControllerPrestiti {
      * @param[in] messaggio Il testo dell'errore da visualizzare.
      */
     private void mostraErrore(String messaggio) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, messaggio, ButtonType.OK);
+        alert.setHeaderText("Errore");
+
+        alert.showAndWait();
     }
 }

@@ -100,6 +100,7 @@ public class ControllerLibri {
      * @post La tabella mostra solo i libri che soddisfano il criterio di
      * ricerca.
      */
+    @FXML
     private void onRicerca() {
         String filtro = campoRicerca.getText(); //prelevo la stringa filtro dal campo di ricerca
         List<Libro> risultati = servizioLibri.cercaLibri(FiltroLibro.ricerca(filtro));  //chiedo al servizio libri di cercare tra i libri tramite il filtro
@@ -112,6 +113,7 @@ public class ControllerLibri {
      * l'operazione va a buon fine, imposta il flag modificheEffettuate su true,
      * per segnalare la modifica.
      */
+    @FXML
     private void onAggiungi() {
         Dialog<Libro> dialog = creaDialogLibro(null);   //creo un nuovo dialog
         dialog.setTitle("Nuovo libro"); //titolo del dialog
@@ -134,6 +136,7 @@ public class ControllerLibri {
      * @pre Deve essere selezionato un libro nella tabella.
      * @post I dati del libro selezionato vengono aggiornati nel modello.
      */
+    @FXML
     private void onModifica() {
         Libro selezionato = tabellaLibri.getSelectionModel().getSelectedItem(); //prendo il libro che il bibliotecario ha selezionato dalla tabella
         if (selezionato == null) {  //se non ha selezionato nulla stampo un messaggio
@@ -177,6 +180,7 @@ public class ControllerLibri {
      * @post Se si verifica un errore (es. prestiti attivi), viene mostrato un
      * Alert all'utente.
      */
+    @FXML
     private void onElimina() {
         Libro selezionato = tabellaLibri.getSelectionModel().getSelectedItem();
         if (selezionato == null) {
@@ -193,7 +197,7 @@ public class ControllerLibri {
                 ButtonType.YES, ButtonType.NO);
         alert.setHeaderText("Conferma eliminazione");
         alert.getDialogPane().getStylesheets().add(
-                getClass().getResource("/gruppo5/bibliosoft/css/stile_viste.css").toExternalForm()
+                getClass().getResource("/css/stile_viste.css").toExternalForm()
         );
         alert.showAndWait().ifPresent(bt -> {
             if (bt == ButtonType.YES) {
@@ -229,7 +233,7 @@ public class ControllerLibri {
         Dialog<Libro> finestraDialog = new Dialog<>();
         finestraDialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         finestraDialog.getDialogPane().getStylesheets().add(
-                getClass().getResource("/gruppo5/bibliosoft/css/stile_viste.css").toExternalForm()
+                getClass().getResource("/css/stile_viste.css").toExternalForm()
         );
 
         TextField isbnField = new TextField();
@@ -335,7 +339,7 @@ public class ControllerLibri {
         Alert alert = new Alert(Alert.AlertType.ERROR, messaggio, ButtonType.OK);
         alert.setHeaderText("Errore");
         alert.getDialogPane().getStylesheets().add(
-                getClass().getResource("/gruppo5/bibliosoft/css/stile_viste.css").toExternalForm()
+                getClass().getResource("/css/stile_viste.css").toExternalForm()
         );
         alert.showAndWait();
     }

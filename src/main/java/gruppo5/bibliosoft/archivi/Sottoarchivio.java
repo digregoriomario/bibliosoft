@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @brief Implementazione concreta di un sotto-archivio in memoria.
@@ -29,7 +30,7 @@ public class Sottoarchivio<T> implements InterfacciaSottoarchivio<T> {
      * @brief Collezione ordinata degli elementi.
      * @details Utilizza un TreeSet per garantire l'ordinamento e l'unicità.
      */
-    protected Set<T> elementi;
+    protected Set<T> elementi = new TreeSet<>(); ;
 
     /**
      * @brief Aggiunge un elemento alla collezione verificando l'unicità.

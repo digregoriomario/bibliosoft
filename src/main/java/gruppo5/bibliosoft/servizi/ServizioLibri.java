@@ -82,6 +82,7 @@ public class ServizioLibri {
             throw new IllegalArgumentException("Libro nullo");
         
         Validatore.validaLibro(libro);  //se il validatore valida libro da modificare(tutti i parametri sono validi)...
+        
         List<Libro> risultati = archivio.cercaLibri(FiltroLibro.ricercaIsbn(libro.getIsbn()));
         
         if(risultati.isEmpty())

@@ -5,6 +5,10 @@
  */
 package gruppo5.bibliosoft.controller;
 
+import gruppo5.bibliosoft.servizi.*;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+
 /**
  * @brief Controller per la gestione della Dashboard.
  * @details Implementa la logica del Caso d'Uso 1 (Visualizzazione Dashboard). 
@@ -12,12 +16,28 @@ package gruppo5.bibliosoft.controller;
  * mostrando statistiche aggiornate su libri, utenti e prestiti.
  */
 public class ControllerDashboard {
-
+    //servizi per interagire con i dati:
     private ServizioPrestiti servizioPrestiti;
-
     private ServizioUtenti servizioUtenti;
-
     private ServizioLibri servizioLibri;
+    
+    //attributi FXML:
+    @FXML
+    private Label prestitiInCorso;
+    @FXML
+    private Label prestitiInRitardo;
+    @FXML
+    private Label prestitiConclusi;
+    @FXML
+    private Label utentiTotali;
+    @FXML
+    private Label utentiPrestitiAttivi;
+    @FXML
+    private Label libriTotali;       
+    @FXML
+    private Label copieTotali;
+    @FXML
+    private Label copieDisponibili;
 
     /**
      * @brief Inizializza i servizi necessari e popola la vista.
@@ -30,6 +50,10 @@ public class ControllerDashboard {
      * @post Le etichette della GUI sono aggiornate con i valori correnti.
      */
     public void impostaServizi(ServizioPrestiti servizioPrestiti, ServizioUtenti servizioUtenti, ServizioLibri servizioLibri) {
+        this.servizioPrestiti = servizioPrestiti;
+        this.servizioUtenti = servizioUtenti;
+        this.servizioLibri = servizioLibri;
+        aggiorna();
     }
 
     /**
@@ -39,6 +63,9 @@ public class ControllerDashboard {
      * riceve il focus.
      */
     public void aggiorna() {
+        aggiornaStatistichePrestiti();
+        aggiornaStatisticheUtenti();
+        aggiornaStatisticheLibri();
     }
 
     /**
@@ -47,6 +74,9 @@ public class ControllerDashboard {
      * corso. Utile per monitorare lo stato di salute dei rientri (RF 3.1.3 - Gestione Prestiti).
      */
     public void aggiornaStatistichePrestiti() {
+        prestitiInRitardo.setText(Integer.toString(servizioPrestiti.getPrestitiInRitardo()));
+        prestitiConclusi.setText(Integer.toString(servizioPrestiti.getPrestitiConclusi()));
+        prestitiInCorso.setText(Integer.toString(servizioPrestiti.getPrestitiInCorso()));
     }
 
     /**
@@ -55,6 +85,8 @@ public class ControllerDashboard {
      * hanno almeno un prestito attivo.
      */
     public void aggiornaStatisticheUtenti() {
+        utentiTotali.setText(Integer.toString(servizioUtenti.getUtentiTotali()));
+        utentiPrestitiAttivi.setText(Integer.toString(servizioUtenti.getUtentiAttivi()));
     }
 
     /**
@@ -64,5 +96,8 @@ public class ControllerDashboard {
      * prestito.
      */
     public void aggiornaStatisticheLibri() {
+        libriTotali.setText(Integer.toString(servizioLibri.getLibriTotali()));
+        copieTotali.setText(Integer.toString(servizioLibri.getCopieTotali()));
+        copieDisponibili.setText(Integer.toString(servizioLibri.getCopieDisponibili()));
     }
 }

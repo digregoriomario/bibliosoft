@@ -74,6 +74,7 @@ public class ControllerPrincipale {
      * @details Invocato quando l'utente seleziona una scheda diversa. Aggiorna
      * tutte le viste per garantire coerenza dei dati visualizzati.
      */
+    @FXML
     public void cambioTab() {
         aggiornaTutto();    //ogni volta che viene cambiata tab bisogna aggiornare tutto (tabelle ecc.)
     }
@@ -196,6 +197,7 @@ public class ControllerPrincipale {
      * @post {modificheEffettuate = false}
      * @post I dati sono persistiti su file.
      */
+    @FXML
     private void onSalvaArchivio(ActionEvent event) {
         try {
             servizioArchivio.salva();
@@ -222,6 +224,7 @@ public class ControllerPrincipale {
      * @post L'applicazione viene chiusa (con o senza salvataggio) oppure
      * l'operazione viene annullata.
      */
+    @FXML
     public void chiudiApplicazione(Event event) {
         // Se l'utente ha fatto ANNULLA o c'è stato errore -> non chiudere
         if (!chiediSeChiudere()) {

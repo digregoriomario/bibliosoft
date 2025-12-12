@@ -5,23 +5,39 @@
  */
 package gruppo5.bibliosoft.controller;
 
+import gruppo5.bibliosoft.modelli.Prestito;
+import static gruppo5.bibliosoft.modelli.StatoPrestito.CONCLUSO;
+import static gruppo5.bibliosoft.modelli.StatoPrestito.IN_CORSO;
+import static gruppo5.bibliosoft.modelli.StatoPrestito.IN_RITARDO;
 import gruppo5.bibliosoft.modelli.Utente;
 import gruppo5.bibliosoft.servizi.ServizioPrestiti;
 import gruppo5.bibliosoft.servizi.ServizioUtenti;
+import java.util.List;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
 /**
  * @brief Controller per la gestione della sezione "Utenti".
  * @details Questa classe gestisce l'interazione tra l'interfaccia utente
  * (tabella utenti, dialoghi di inserimento/modifica) e la logica di business.
- * 
- * Implementa le funzionalità descritte nei seguenti casi d'uso: 
- * * UC 7: Visualizzazione lista utenti.
- * * UC 8: Inserimento nuovo utente.
- * * UC 9: Modifica dati utente.
- * * UC 10: Cancellazione utente.
- * * UC 11: Ricerca utente.
+ *
+ * Implementa le funzionalità descritte nei seguenti casi d'uso: * UC 7:
+ * Visualizzazione lista utenti. * UC 8: Inserimento nuovo utente. * UC 9:
+ * Modifica dati utente. * UC 10: Cancellazione utente. * UC 11: Ricerca utente.
  * * UC 13: Storico prestiti.
  *
  * @invariant {@code servizioUtenti != null}
@@ -29,16 +45,32 @@ import javafx.scene.control.Dialog;
  */
 public class ControllerUtenti {
 
+    //servizi per interagire con i dati:
     private ServizioUtenti servizioUtenti;
-
     private ServizioPrestiti servizioPrestiti;
+
+    //attributi FXML:
+    @FXML
+    private TextField campoRicerca;
+    @FXML
+    private TableView<Utente> tabellaUtenti;
+    @FXML
+    private TableColumn<Utente, String> colonnaMatricola;
+    @FXML
+    private TableColumn<Utente, String> colonnaCognome;
+    @FXML
+    private TableColumn<Utente, String> colonnaNome;
+    @FXML
+    private TableColumn<Utente, String> colonnaEmail;
+    @FXML
+    private TableColumn<Utente, Number> colonnaPrestiti;
 
     /**
      * @brief Lista osservabile che funge da model per la TableView.
      * @details Contiene i dati degli utenti filtrati e aggiornati, pronti per
      * essere visualizzati secondo RF 3.4.2.
      */
-    private final ObservableList<Utente> dati;
+    private final ObservableList<Utente> dati = FXCollections.observableArrayList();
 
     /**
      * @brief Inizializza i servizi e configura lo stato iniziale della vista.
@@ -54,6 +86,10 @@ public class ControllerUtenti {
      * @post La tabella è inizializzata e popolata con i dati correnti.
      */
     public void impostaServizi(ServizioUtenti servizioUtenti, ServizioPrestiti servizioPrestiti) {
+        this.servizioUtenti = servizioUtenti;
+        this.servizioPrestiti = servizioPrestiti;
+        inizializzaTabella();
+        aggiorna();
     }
 
     /**
@@ -63,6 +99,15 @@ public class ControllerUtenti {
      * Prestiti Attivi) e le proprietà dell'oggetto `Utente`.
      */
     private void inizializzaTabella() {
+        colonnaMatricola.setCellValueFactory(new PropertyValueFactory<>("matricola"));
+        colonnaCognome.setCellValueFactory(new PropertyValueFactory<>("cognome"));
+        colonnaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        colonnaEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        colonnaPrestiti.setCellValueFactory(c
+                -> new javafx.beans.property.SimpleIntegerProperty(c.getValue().getPrestitiAttivi().size()));
+
+        tabellaUtenti.setPlaceholder(new Label("Nessun utente presente"));
+        tabellaUtenti.setItems(dati);
     }
 
     /**
@@ -72,7 +117,11 @@ public class ControllerUtenti {
      * campo di ricerca. La ricerca avviene per cognome o matricola.
      *
      */
+    @FXML
     private void onRicerca() {
+        String filtro = campoRicerca.getText();
+        List<Utente> result = servizioUtenti.cerca(filtro);
+        dati.setAll(result);
     }
 
     /**
@@ -84,7 +133,19 @@ public class ControllerUtenti {
      *
      * @post Un nuovo utente è aggiunto all'archivio se i dati sono validi.
      */
+    @FXML
     private void onAggiungi() {
+        Dialog<Utente> finestraDialogo = creaDialogUtente(null);
+        finestraDialogo.setTitle("Nuovo utente");
+        finestraDialogo.showAndWait().ifPresent(u -> {
+            try {
+                servizioUtenti.aggiungiUtente(u);
+                ControllerPrincipale.modificheEffettuate = true;
+                aggiorna();
+            } catch (Exception ex) {
+                mostraErrore(ex.getMessage());
+            }
+        });
     }
 
     /**
@@ -97,7 +158,27 @@ public class ControllerUtenti {
      *
      * @pre Deve essere selezionato un utente dalla tabella.
      */
+    @FXML
     private void onModifica() {
+        Utente selezionato = tabellaUtenti.getSelectionModel().getSelectedItem();
+        if (selezionato == null) {
+            mostraErrore("Seleziona un utente.");
+            return;
+        }
+        Dialog<Utente> finestraDialogo = creaDialogUtente(selezionato);
+        finestraDialogo.setTitle("Modifica utente");
+        finestraDialogo.showAndWait().ifPresent(u -> {
+            try {
+                selezionato.setNome(u.getNome());
+                selezionato.setCognome(u.getCognome());
+                selezionato.setEmail(u.getEmail());
+                servizioUtenti.modificaUtente(selezionato);
+                ControllerPrincipale.modificheEffettuate = true;
+                aggiorna();
+            } catch (Exception ex) {
+                mostraErrore(ex.getMessage());
+            }
+        });
     }
 
     /**
@@ -111,7 +192,35 @@ public class ControllerUtenti {
      * @post Se l'utente non ha prestiti attivi, viene rimosso dall'archivio.
      * @post Se l'utente ha prestiti attivi, viene mostrato un errore.
      */
+    @FXML
     private void onElimina() {
+        Utente selezionato = tabellaUtenti.getSelectionModel().getSelectedItem();
+        if (selezionato == null) {
+            mostraErrore("Seleziona un utente.");
+            return;
+        }
+        if (selezionato.haPrestitiAttivi()) {
+            mostraErrore("L'utente selezionato ha dei prestiti attivi");
+            return;
+        }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "Vuoi davvero eliminare l'utente selezionato?",
+                ButtonType.YES, ButtonType.NO);
+        alert.setHeaderText("Conferma eliminazione");
+        alert.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/stile_viste.css").toExternalForm()
+        );
+        alert.showAndWait().ifPresent(bt -> {
+            if (bt == ButtonType.YES) {
+                try {
+                    servizioUtenti.eliminaUtente(selezionato);
+                    ControllerPrincipale.modificheEffettuate = true;
+                    aggiorna();
+                } catch (Exception ex) {
+                    mostraErrore(ex.getMessage());
+                }
+            }
+        });
     }
 
     /**
@@ -125,7 +234,49 @@ public class ControllerUtenti {
      *
      * @pre Deve essere selezionato un utente dalla tabella.
      */
+    @FXML
     private void onStorico() {
+        Utente selezionato = tabellaUtenti.getSelectionModel().getSelectedItem();
+        if (selezionato == null) {
+            mostraErrore("Seleziona un utente.");
+            return;
+        }
+        List<Prestito> storico = servizioPrestiti.storico(selezionato);
+        StringBuilder sb = new StringBuilder();
+        //In corso, ritardo -> Titolo - Inzio - Prevista - Stato
+        //Concluso -> Titolo - Inzio - Prevista  - Effettiva - Stato
+        for (Prestito prestito : storico) {
+            switch (prestito.getStato()) {
+                case IN_CORSO:
+                case IN_RITARDO:
+                    sb.append(prestito.getLibro().getTitolo())
+                            .append(" - Inizio: ").append(prestito.getDataInizio())
+                            .append(" Prevista: ").append(prestito.getDataPrevista())
+                            .append(" Stato: ").append(prestito.getStato())
+                            .append("\n\n");
+                    break;
+
+                case CONCLUSO:
+                    sb.append(prestito.getLibro().getTitolo())
+                            .append(" - Inizio: ").append(prestito.getDataInizio())
+                            .append(" Prevista: ").append(prestito.getDataPrevista())
+                            .append(" Effetiva: ").append(prestito.getDataRestituzioneEffettiva())
+                            .append(" Stato: ").append(prestito.getStato())
+                            .append("\n\n");
+                    break;
+            }
+        }
+        Label contenuto = new Label(sb.length() == 0 ? "Nessun prestito effettuato." : sb.toString());
+        contenuto.setWrapText(false);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+        alert.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/stile_viste.css").toExternalForm()
+        );
+        alert.getDialogPane().setContent(contenuto);
+        alert.setHeaderText("Storico prestiti di " + selezionato);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        alert.showAndWait();
     }
 
     /**
@@ -134,6 +285,7 @@ public class ControllerUtenti {
      * di filtri.
      */
     public void aggiorna() {
+        dati.setAll(servizioUtenti.listaUtenti());
     }
 
     /**
@@ -149,7 +301,86 @@ public class ControllerUtenti {
      * Utente.
      */
     private Dialog<Utente> creaDialogUtente(Utente iniziale) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Dialog<Utente> dialog = new Dialog<>();
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialog.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/stile_viste.css").toExternalForm()
+        );
+
+        TextField matricolaField = new TextField();
+        TextField nomeField = new TextField();
+        TextField cognomeField = new TextField();
+        TextField emailField = new TextField();
+
+        if (iniziale != null) {
+            matricolaField.setText(iniziale.getMatricola());
+            matricolaField.setDisable(true);
+            nomeField.setText(iniziale.getNome());
+            cognomeField.setText(iniziale.getCognome());
+            emailField.setText(iniziale.getEmail());
+        }
+
+        VBox contenitore = new VBox(10);
+        contenitore.setPadding(new Insets(10, 20, 10, 20));
+
+        VBox colNome = new VBox(5);
+        Label labelNome = new Label("Nome:");
+        labelNome.setMinWidth(150);
+        colNome.getChildren().addAll(labelNome, nomeField);
+
+        VBox colCognome = new VBox(5);
+        Label labelCognome = new Label("Cognome:");
+        labelCognome.setMinWidth(150);
+        colCognome.getChildren().addAll(labelCognome, cognomeField);
+
+        HBox rigaNomeCognome = new HBox(20);
+        rigaNomeCognome.getChildren().addAll(colNome, colCognome);
+
+        VBox colMatricola = new VBox(5);
+        Label labelMatricola = new Label("Matricola:");
+        labelMatricola.setMinWidth(150);
+        colMatricola.getChildren().addAll(labelMatricola, matricolaField);
+
+        VBox colEmail = new VBox(5);
+        Label labelEmail = new Label("Email istituzionale:");
+        labelEmail.setMinWidth(150);
+        colEmail.getChildren().addAll(labelEmail, emailField);
+
+        HBox rigaMatricolaEmail = new HBox(20);
+        rigaMatricolaEmail.getChildren().addAll(colMatricola, colEmail);
+
+        contenitore.getChildren().addAll(
+                rigaNomeCognome,
+                rigaMatricolaEmail
+        );
+
+        dialog.getDialogPane().setContent(contenitore);
+
+       
+        Node okButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
+
+        okButton.disableProperty().bind(matricolaField.textProperty().isEmpty()
+                .or(nomeField.textProperty().isEmpty())
+                .or(cognomeField.textProperty().isEmpty())
+                .or(emailField.textProperty().isEmpty()));
+
+        dialog.setResultConverter(bt -> {
+            if (bt == ButtonType.OK) {
+                try {
+                    String m = matricolaField.getText();
+                    String n = nomeField.getText();
+                    String c = cognomeField.getText();
+                    String e = emailField.getText();
+                    return new Utente(m, n, c, e);
+                } catch (Exception ex) {
+                    mostraErrore("Dati non validi: " + ex.getMessage());
+                    return null;
+                }
+            }
+            return null;
+        });
+
+        return dialog;
     }
 
     /**
@@ -161,5 +392,11 @@ public class ControllerUtenti {
      * @param[in] messaggio Il testo dell'errore da visualizzare.
      */
     private void mostraErrore(String messaggio) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, messaggio, ButtonType.OK);
+        alert.setHeaderText("Errore");
+        alert.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/stile_viste.css").toExternalForm()
+        );
+        alert.showAndWait();
     }
 }

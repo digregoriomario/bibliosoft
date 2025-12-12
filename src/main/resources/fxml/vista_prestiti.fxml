@@ -64,7 +64,7 @@
                                <TableColumn fx:id="colonnaLibro" prefWidth="220" text="Libro" />
                                <TableColumn fx:id="colonnaDataInizio" prefWidth="100" text="Inizio" />
                                <TableColumn fx:id="colonnaDataPrevista" prefWidth="100" text="Prevista" />
-                               <TableColumn fx:id="colonnaEffettiva" prefWidth="100" text="Effettiva" />
+                               <TableColumn fx:id="colonnaDataEffettiva" prefWidth="100" text="Effettiva" />
                                <TableColumn fx:id="colonnaStato" prefWidth="90" text="Stato" />
                            </columns>
                            <columnResizePolicy>
