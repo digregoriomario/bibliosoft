@@ -17,7 +17,7 @@ import java.util.List;
  * per il salvataggio su file.
  *
  * @invariant {@code isbn != null && !isbn.isEmpty()}
- * @invariant {@code copieTotali >= 0} (Deve esistere almeno una copia fisica
+ * @invariant {@code copieTotali >= 1} (Deve esistere almeno una copia fisica
  * all'atto della creazione )
  * @invariant {@code 0 <= copieDisponibili <= copieTotali}
  */
@@ -47,11 +47,9 @@ public class Libro implements Serializable, Comparable<Libro> {
      * @param[in] annoPubblicazione Anno di pubblicazione.
      * @param[in] copieTotali Numero totale di copie fisiche acquisite.
      *
-     * @pre {@code isbn != null && !isbn.isEmpty()} (Identificativo
-     * obbligatorio)
-     * @pre {@code titolo != null} (Dato essenziale)
-     * @pre {@code copieTotali >= 1} (Un nuovo libro deve avere consistenza
-     * fisica)
+     * @pre {@code isbn != null && !isbn.isEmpty() && titolo != null && !titolo.isEmpty()} (ISBN e Titolo obbligatori e non vuoti).
+     * @pre {@code copieTotali >= 1} (Consistenza fisica minima).
+     * 
      * @post copieDisponibili = copieTotali (Tutte le copie sono inizialmente disponibili).
      */
     public Libro(String isbn, String titolo, List<String> autori, int annoPubblicazione, int copieTotali) {

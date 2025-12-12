@@ -49,9 +49,8 @@ public class Utente implements Serializable, Comparable<Utente> {
      * @param[in] cognome Cognome dell'utente.
      * @param[in] email Indirizzo e-mail istituzionale (deve terminare con "@studenti.unisa.it").
      *
-     * @pre {@code matricola != null && !matricola.isEmpty()} (Identificativo obbligatorio).
-     * @pre {@code email != null && email.endsWith("@studenti.unisa.it")} (Vincolo di validazione).
-     * @pre {@code nome != null && cognome != null}
+     * @pre {@code matricola != null && Validator.isValidMatricola(matricola)} (Matricola valida e conforme al formato).
+     * @pre {@code email != null && Validator.isValidEmail(email)} (Email valida e conforme al formato).
      *
      * @post {@code prestitiAttivi.isEmpty() = true} (Nuovo utente senza prestiti).
      */
@@ -114,7 +113,6 @@ public class Utente implements Serializable, Comparable<Utente> {
      * @pre {@code prestito != null}
      * @pre {@code prestitiAttivi.size() < 3} (L'utente non deve avere già 3 prestiti attivi).
      *
-     * @throws IllegalStateException Se l'utente ha raggiunto il limite massimo di prestiti.
      */
     public void aggiungiPrestito(Prestito prestito) {
         prestitiAttivi.add(prestito);

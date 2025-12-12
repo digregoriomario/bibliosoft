@@ -51,17 +51,16 @@ public class Prestito implements Serializable, Comparable<Prestito>{
      * imposta lo stato iniziale a "IN_CORSO", decrementando le copie del libro
      * nel contesto del servizio chiamante.
      *
-     * Include controlli di validazione per impedire la creazione di prestiti inconsistenti.
      *
-     * @param[in] utente L'utente che richiede il prestito.
-     * @param[in] libro Il libro oggetto del prestito.
+     * @param[in] utente L'utente che richiede il prestito (deve essere abilitato).
+     * @param[in] libro Il libro oggetto del prestito(deve essere disponibile).
      * @param[in] dataInizio La data di inizio del prestito.
      * @param[in] dataPrevista La data entro cui il libro deve essere restituito.
      *
-     * @pre {@code utente != null}
-     * @pre {@code libro != null}
-     * @pre {@code dataInizio != null && dataPrevista != null}
-     * @pre {@code !dataPrevista.isBefore(dataInizio)}
+     *
+     * @pre {@code utente != null && libro != null} (Utente e libro non devono essere null).
+     * @pre {@code !dataPrevista.isBefore(dataInizio)} (Verifica a carico del chiamante).
+     *
      * 
      * @post {@code stato = StatoPrestito.IN_CORSO}
      * @post {@code id != null}
