@@ -4,8 +4,11 @@
  * @version 1.0
  */
 
-
 package gruppo5.bibliosoft.modelli;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @brief Classe che rappresenta l'entità Utente nel dominio dell'applicazione.
@@ -22,7 +25,7 @@ package gruppo5.bibliosoft.modelli;
  * @invariant {@code prestitiAttivi != null}
  * @invariant {@code prestitiAttivi.size() <= 3} (Vincolo di business sui prestiti contemporanei).
  */
-public class Utente {
+public class Utente implements Serializable, Comparable<Utente> {
 
     private final String matricola;
 
@@ -32,7 +35,7 @@ public class Utente {
 
     private String email;
 
-    private List<Prestito> prestitiAttivi;
+    private List<Prestito> prestitiAttivi = new ArrayList<>();
 
     /**
      * @brief Costruttore della classe Utente.
@@ -53,31 +56,38 @@ public class Utente {
      * @post {@code prestitiAttivi.isEmpty() = true} (Nuovo utente senza prestiti).
      */
     public Utente(String matricola, String nome, String cognome, String email) {
-    }
+          this.matricola = matricola;
+          this.nome = nome;
+          this.cognome = cognome;
+          this.email = email;
+    } 
 
     public String getMatricola() {
-        throw new UnsupportedOperationException("Not supported yet.");
+         return matricola;
     }
 
     public String getNome() {
-        throw new UnsupportedOperationException("Not supported yet.");
+         return nome;
     }
 
     public void setNome(String nome) {
+         this.nome = nome;
     }
 
     public String getCognome() {
-        throw new UnsupportedOperationException("Not supported yet.");
+         return cognome;
     }
 
     public void setCognome(String cognome) {
+         this.cognome = cognome;
     }
 
     public String getEmail() {
-        throw new UnsupportedOperationException("Not supported yet.");
+         return email;
     }
 
     public void setEmail(String email) {
+         this.email = email;
     }
 
     /**
@@ -90,7 +100,7 @@ public class Utente {
      * @return Lista di oggetti Prestito.
      */
     public List<Prestito> getPrestitiAttivi() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new ArrayList<>(prestitiAttivi);
     }
 
     /**
@@ -107,6 +117,7 @@ public class Utente {
      * @throws IllegalStateException Se l'utente ha raggiunto il limite massimo di prestiti.
      */
     public void aggiungiPrestito(Prestito prestito) {
+        prestitiAttivi.add(prestito);
     }
 
     /**
@@ -120,6 +131,7 @@ public class Utente {
      * @pre {@code prestito != null}
      */
     public void rimuoviPrestito(Prestito prestito) {
+        prestitiAttivi.remove(prestito);
     }
 
     /**
@@ -131,7 +143,7 @@ public class Utente {
      * @return true se {@code prestitiAttivi.size() > 0}, false altrimenti.
      */
     public boolean haPrestitiAttivi() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return !prestitiAttivi.isEmpty();
     }
 
     /**
@@ -145,7 +157,13 @@ public class Utente {
      * @return true se l'oggetto è un Utente con la stessa matricola.
      */
     public boolean equals(Object oggetto) {
-        throw new UnsupportedOperationException("Not supported yet.");
+         if(this == oggetto)
+            return true;
+        
+        if(oggetto == null || getClass() != oggetto.getClass())
+            return false;
+        
+        return matricola.equals(((Utente) oggetto).getMatricola());
     }
 
     /**
@@ -161,7 +179,22 @@ public class Utente {
      * 
      * @pre {@code utente != null}
      */
+    
+     @Override
     public int compareTo(Utente utente) {
-        throw new UnsupportedOperationException("Not supported yet.");
+         if(matricola.compareToIgnoreCase(utente.getMatricola()) == 0)
+            return 0;
+        
+        if(email.compareToIgnoreCase(utente.getEmail()) == 0)
+            return 0;
+        
+        int cmp = cognome.compareToIgnoreCase(utente.getCognome());
+        cmp = (cmp != 0)? cmp : nome.compareToIgnoreCase(utente.getNome());
+        return (cmp != 0) ? cmp : matricola.compareToIgnoreCase(utente.getMatricola());
+    }
+    
+     @Override
+    public String toString() {
+        return cognome + " " + nome + " (" + matricola + ")";
     }
 }
