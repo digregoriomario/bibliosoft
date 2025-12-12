@@ -159,8 +159,8 @@ public class ServizioPrestiti {
 
     /**
      * @brief Conta i prestiti attualmente in ritardo.
-     * @details Utilizzato per il Pannello di Controllo (UC1 - Visualizzazione
-     * Pannello di Controllo).
+     * @details Utilizzato per la Dashboard (UC1 - Visualizzazione
+     * Dashboard).
      *
      * @return Numero di prestiti scaduti.
      */
@@ -170,8 +170,8 @@ public class ServizioPrestiti {
 
     /**
      * @brief Conta i prestiti conclusi.
-     * @details Utilizzato per il Pannello di Controllo (UC1 - Visualizzazione
-     * Pannello di Controllo).
+     * @details Utilizzato per la Dashboard (UC1 - Visualizzazione
+     * Dashboard).
      *
      * @return Numero di prestiti nello storico.
      */
@@ -181,8 +181,8 @@ public class ServizioPrestiti {
 
     /**
      * @brief Conta i prestiti in corso.
-     * @details Utilizzato per il Pannello di Controllo (UC1 - Visualizzazione
-     * Pannello di Controllo).
+     * @details Utilizzato per la Dashboard (UC1 - Visualizzazione
+     * Dashboard).
      *
      * @return Numero di prestiti regolarmente in corso.
      */

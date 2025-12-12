@@ -78,8 +78,22 @@ public class ServizioLibri {
      * @throws IllegalArgumentException Se i dati non sono validi.
      */
     public void modificaLibro(Libro libro) {
+        if(libro == null)
+            throw new IllegalArgumentException("Libro nullo");
+        
         Validatore.validaLibro(libro);  //se il validatore valida libro da modificare(tutti i parametri sono validi)...
-        //aggiungi eventuali controlli per vedere se il libro può essere modificato (copie già in prestito)
+        List<Libro> risultati = archivio.cercaLibri(FiltroLibro.ricercaIsbn(libro.getIsbn()));
+        
+        if(risultati.isEmpty())
+            throw new IllegalArgumentException("Libro non trovato");
+        
+        Libro libroDaModificare = risultati.get(0);
+        
+        if(libro.getCopieTotali() < libroDaModificare.getCopieInPrestito())
+            throw new IllegalArgumentException("Copie totali troppo basso. (" + libroDaModificare.getCopieInPrestito() + " copie attualmente in prestito)");
+        
+        libro.setCopieDisponibili(libroDaModificare.getCopieDisponibili() + libro.getCopieTotali() - libroDaModificare.getCopieTotali());
+        
         archivio.modificaLibro(libro);  //...allora modifico il libro nell'archivio
     }
 
@@ -133,8 +147,8 @@ public class ServizioLibri {
 
     /**
      * @brief Restituisce il numero totale di titoli unici (ISBN) nel catalogo.
-     * @details Utilizzato per il Pannello di Controllo (UC1 - Visualizzazione
-     * Pannello di Controllo).
+     * @details Utilizzato per la Dashboard (UC1 - Visualizzazione
+     * Dashboard).
      *
      * @return Conteggio titoli.
      */
@@ -145,8 +159,8 @@ public class ServizioLibri {
     /**
      * @brief Calcola il numero totale di copie fisiche possedute dalla
      * biblioteca.
-     * @details Utilizzato per il Pannello di Controllo (UC1 - Visualizzazione
-     * Pannello di Controllo).
+     * @details Utilizzato per la Dashboard (UC1 - Visualizzazione
+     * Dashboard).
      *
      * Itera su tutti i libri sommando il campo 'copieTotali'.
      *
@@ -164,8 +178,8 @@ public class ServizioLibri {
     /**
      * @brief Calcola il numero totale di copie attualmente disponibili in
      * biblioteca.
-     * @details Utilizzato per il Pannello di Controllo (UC1 - Visualizzazione
-     * Pannello di Controllo).
+     * @details Utilizzato per la Dashboard (UC1 - Visualizzazione
+     * Dashboard).
      *
      * Itera su tutti i libri sommando il campo 'copieDisponibili'.
      *

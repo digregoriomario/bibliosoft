@@ -133,8 +133,8 @@ public class ServizioUtenti {
 
     /**
      * @brief Restituisce il numero totale di utenti registrati.
-     * @details Utilizzato per il Pannello di Controllo (UC1 - Visualizzazione
-     * Pannello di Controllo).
+     * @details Utilizzato per la Dashboard (UC1 - Visualizzazione
+     * Dashboard).
      *
      * @return Conteggio utenti.
      */
@@ -145,8 +145,8 @@ public class ServizioUtenti {
     /**
      * @brief Restituisce il numero di utenti che hanno almeno un prestito
      * attivo.
-     * @details Utilizzato per il Pannello di Controllo (UC1 - Visualizzazione
-     * Pannello di Controllo).
+     * @details Utilizzato per la Dashboard (UC1 - Visualizzazione
+     * Dashboard).
      *
      * @return Numero di utenti con prestiti in corso o in ritardo.
      * @see FiltroUtente

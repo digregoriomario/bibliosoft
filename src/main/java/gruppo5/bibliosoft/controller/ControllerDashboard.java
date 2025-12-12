@@ -1,14 +1,13 @@
 /**
- * @file ControllerPannelloControllo.java
+ * @file ControllerDashboard.java
  * @author gruppo5
  * @version 1.0
  */
 package gruppo5.bibliosoft.controller;
 
 /**
- * @brief Controller per la gestione del pannello di controllo.
- * @details Implementa la logica del Caso d'Uso 1 (Visualizzazione Pannello di
- * Controllo). 
+ * @brief Controller per la gestione della Dashboard.
+ * @details Implementa la logica del Caso d'Uso 1 (Visualizzazione Dashboard). 
  * Fornisce una visione d'insieme dello stato della biblioteca,
  * mostrando statistiche aggiornate su libri, utenti e prestiti.
  */
@@ -34,7 +33,7 @@ public class ControllerDashboard {
     }
 
     /**
-     * @brief Aggiorna tutte le sezioni statistiche del pannello.
+     * @brief Aggiorna tutte le sezioni statistiche della dashboard.
      * @details Metodo che invoca l'aggiornamento specifico per prestiti, utenti
      * e libri. Viene chiamato all'inizializzazione e ogni volta che la tab
      * riceve il focus.
