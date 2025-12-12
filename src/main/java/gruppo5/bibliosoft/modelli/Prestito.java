@@ -6,6 +6,10 @@
 
 package gruppo5.bibliosoft.modelli;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.UUID;
+
 /**
  * @brief Classe che rappresenta l'associazione temporale tra un Utente e un Libro.
  * @details
@@ -23,20 +27,20 @@ package gruppo5.bibliosoft.modelli;
  * @invariant {@code !dataPrevista.isBefore(dataInizio)} (La scadenza non può essere antecedente all'inizio)
  */
 
-public class Prestito {
+public class Prestito implements Serializable, Comparable<Prestito>{
 
-    private String id;
-
-    private Utente utente;
-
-    private Libro libro;
-
-    private LocalDate dataInizio;
-
-    private LocalDate dataPrevista;
-
+    private final String id;
+    
+    private final Utente utente;
+    
+    private final Libro libro;
+    
+    private final LocalDate dataInizio;
+    
+    private final LocalDate dataPrevista;
+    
     private LocalDate dataRestituzioneEffettiva;
-
+    
     private StatoPrestito stato;
 
     /**
@@ -64,52 +68,52 @@ public class Prestito {
      * 
      */
     public Prestito(Utente utente, Libro libro, LocalDate dataInizio, LocalDate dataPrevista) {
+        this.id = UUID.randomUUID().toString();
+        this.utente = utente;
+        this.libro = libro;
+        this.dataInizio = dataInizio;
+        this.dataPrevista = dataPrevista;
+        this.stato = StatoPrestito.IN_CORSO;
     }
 
     public String getId() {
-        throw new UnsupportedOperationException("Not supported yet.");
+       return id;
     }
 
     public Utente getUtente() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return utente;
     }
 
-    public void setUtente(Utente utente) {
-    }
 
     public Libro getLibro() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return libro;
     }
 
-    public void setLibro(Libro libro) {
-    }
 
     public LocalDate getDataInizio() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return dataInizio;
     }
 
-    public void setDataInizio(LocalDate dataInizio) {
-    }
 
     public LocalDate getDataPrevista() {
-        throw new UnsupportedOperationException("Not supported yet.");
+       return dataPrevista;
     }
 
-    public void setDataPrevista(LocalDate dataPrevista) {
-    }
 
     public LocalDate getDataRestituzioneEffettiva() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return dataRestituzioneEffettiva;
     }
 
     public void setDataRestituzioneEffettiva(LocalDate dataRestituzioneEffettiva) {
+        this.dataRestituzioneEffettiva = dataRestituzioneEffettiva;
     }
 
     public StatoPrestito getStato() {
-        throw new UnsupportedOperationException("Not supported yet.");
+          return stato;
     }
 
     public void setStato(StatoPrestito stato) {
+        this.stato = stato;
     }
 
     /**
@@ -127,6 +131,9 @@ public class Prestito {
      * @throws IllegalArgumentException Se la data passata è null.
      */
     public void aggiornaStato(LocalDate oggi) {
+        if (stato == StatoPrestito.IN_CORSO && oggi.isAfter(dataPrevista)) {
+            stato = StatoPrestito.IN_RITARDO;
+        }
     }
 
     /**
@@ -142,6 +149,8 @@ public class Prestito {
      * @pre {@code oggi != null} (Delegato a aggiornaStato()).
      */
     public boolean eInRitardo(LocalDate oggi) {
+         aggiornaStato(oggi);
+        return stato == StatoPrestito.IN_RITARDO;
     }
     
     /**
@@ -154,7 +163,16 @@ public class Prestito {
      * @return true se gli ID coincidono.
      */
     public boolean equals(Object oggetto) {
-        throw new UnsupportedOperationException("Not supported yet.");
+      if (this == oggetto) {
+            return true;
+        }
+
+        if (oggetto == null || getClass() != oggetto.getClass()) {
+            return false;
+        }
+
+        
+        return id.equals(((Prestito) oggetto).getId());
     }
 
    /**
@@ -170,7 +188,10 @@ public class Prestito {
      * @pre {@code prestito != null}
      * @throws NullPointerException Se l'oggetto prestito passato è null.
      */
+    
+    @Override
     public int compareTo(Prestito prestito) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int cmp = dataPrevista.compareTo(prestito.getDataPrevista());
+        return (cmp != 0) ? cmp : id.compareTo(prestito.getId());
     }
 }

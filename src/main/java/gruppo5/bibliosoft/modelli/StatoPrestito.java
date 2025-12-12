@@ -16,10 +16,11 @@ package gruppo5.bibliosoft.modelli;
  * I valori ammessi sono tassativi e derivano direttamente dalle specifiche di analisi.
  */
 public enum StatoPrestito {
-    private final String descrizione;
+    IN_CORSO("In Corso"),
+    IN_RITARDO("In Ritardo"),
+    CONCLUSO("Concluso");
 
-    IN_CORSO, IN_RITARDO, CONCLUSO
-    
+    private final String descrizione;
     /**
      * @brief Costruttore dell'enum.
      * @details
@@ -28,7 +29,12 @@ public enum StatoPrestito {
      *
      * @param descrizione Stringa formattata per l'UI (es. "In Corso").
      */
-    StatoPrestito(String descrizione) {
+   StatoPrestito(String descrizione) {
+        this.descrizione = descrizione;
+    }
 
+    @Override
+    public String toString() {
+        return descrizione;
     }
 }
