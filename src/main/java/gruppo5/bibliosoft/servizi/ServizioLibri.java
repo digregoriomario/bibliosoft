@@ -154,7 +154,7 @@ public class ServizioLibri {
      * @return Conteggio titoli.
      */
     public int getLibriTotali() {
-        return archivio.contaLibri();   //restituisco il numero di copie totali
+        return archivio.contaLibri();   //restituisco il numero di libri univoci totali
     }
 
     /**

@@ -107,7 +107,7 @@ public class ServizioUtenti {
 
     /**
      * @brief Restituisce la lista completa degli utenti.
-     * @details Implementa il Caso d'Uso 10 (Visualizzazione lista utenti) e RF
+     * @details Implementa il Caso d'Uso 7 (Visualizzazione lista utenti) e RF
      * 3.1.2.4 (Lista ordinata).
      *
      * @return Lista di tutti gli utenti registrati.
