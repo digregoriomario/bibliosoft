@@ -183,7 +183,15 @@ public class ControllerPrestiti {
      * @param[in] attivo Il bottone che è stato appena premuto.
      */
     private void selezionaFiltro(Button attivo) {
+        // rimuovo lo stile "attivo" da tutti
+        bottoneAttivi.getStyleClass().remove("bottoni_filtro_attivo");
+        bottoneConclusi.getStyleClass().remove("bottoni_filtro_attivo");
+        bottoneTutti.getStyleClass().remove("bottoni_filtro_attivo");
 
+        // aggiungo lo stile "attivo" solo a quello selezionato
+        if (!attivo.getStyleClass().contains("bottoni_filtro_attivo")) {
+            attivo.getStyleClass().add("bottoni_filtro_attivo");
+        }
     }
 
     /**

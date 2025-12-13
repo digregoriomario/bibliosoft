@@ -1,0 +1,45 @@
+/*VARIABILI GLOBALI: */
+* {
+    
+    -fx-colore-primario: #007AFF;
+    -fx-colore-pericolo: #FF3B30;
+    -fx-coloro-successo: #34C759;
+    -fx-colore-sfondo: #F5F5F7;
+    -fx-colore-rettangolo: #FFFFFF;
+    -fx-colore-testo-primario: #1D1D1F;
+    -fx-colore-testo-secondario: #86868B;
+    -fx-border-radius: 10px;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+}
+
+.root {
+    -fx-font-family: "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: -fx-colore-sfondo;
+    -fx-text-fill: -fx-colore-testo-primario;
+}
+
+.tab-pane .tab {
+    -fx-background-radius: 5px 5px 0 0;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-radius: 5px 5px 0 0;
+    -fx-border-radius: 5px 5px 0 0;
+}
+
+.tab-pane .tab .tab-label {
+    -fx-font-size: 20px;
+}
+
+.tab-pane:focused,
+.tab-pane .tab:focused,
+.tab-pane .tab .focus-indicator,
+.tab-pane:focused .tab:selected .focus-indicator {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}

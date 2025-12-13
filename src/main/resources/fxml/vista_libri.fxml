@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TableColumn?>
@@ -13,7 +10,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="20" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gruppo5.bibliosoft.controller.ControllerLibri">
+<VBox spacing="20" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gruppo5.bibliosoft.controller.ControllerLibri">
     <padding>
         <Insets bottom="20" left="20" right="20" top="20" />
     </padding>
@@ -21,11 +18,11 @@
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
                 <TextField fx:id="campoRicerca" prefHeight="35.0" prefWidth="300" promptText="Cerca per titolo, autore o ISBN..." />
-                <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#onRicerca" prefHeight="35.0" prefWidth="60.0" text="Cerca" />
+                <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#onRicerca" prefHeight="35.0" prefWidth="60.0" styleClass="bottone-primario" text="Cerca" />
                 <Pane HBox.hgrow="ALWAYS" />
                 <Button onAction="#onAggiungi" text="Nuovo" />
                 <Button onAction="#onModifica" text="Modifica" />
-                <Button onAction="#onElimina" text="Elimina" />
+                <Button onAction="#onElimina" styleClass="bottone-pericolo" text="Elimina" />
             </children>
         </HBox>
 
@@ -47,4 +44,8 @@
             </children>
         </VBox>
     </children>
+   <stylesheets>
+      <URL value="@../css/stile_generale.css" />
+      <URL value="@../css/stile_viste.css" />
+   </stylesheets>
 </VBox>
