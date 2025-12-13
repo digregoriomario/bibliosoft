@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="20" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gruppo5.bibliosoft.controller.ControllerUtenti">
+<VBox spacing="20" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gruppocinque.bibliosoft.controller.ControllerUtenti">
     <padding>
         <Insets bottom="20" left="20" right="20" top="20" />
     </padding>

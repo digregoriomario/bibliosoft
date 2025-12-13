@@ -55,10 +55,6 @@
     -fx-padding: 0px 0px 0px 5px;
 }
 
-.date-picker .text-field{
-    -fx-border-color: trasparent;
-}
-
 .text-field:focused, .combo-box:focused {
     -fx-border-color: -fx-colore-testo-primario;
 }

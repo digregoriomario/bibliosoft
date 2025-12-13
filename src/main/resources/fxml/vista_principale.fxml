@@ -8,7 +8,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane fx:id="root" stylesheets="@../css/stile_generale.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gruppo5.bibliosoft.controller.ControllerPrincipale">
+<BorderPane fx:id="root" stylesheets="@../css/stile_generale.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gruppocinque.bibliosoft.controller.ControllerPrincipale">
 
     <top>
         <MenuBar>

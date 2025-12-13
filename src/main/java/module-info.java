@@ -1,9 +1,9 @@
-module gruppo5.bibliosoft {
+module gruppocinque.bibliosoft {
     requires javafx.controls;
     requires javafx.fxml;
 
-    opens gruppo5.bibliosoft.controller to javafx.fxml;
-    opens gruppo5.bibliosoft.modelli to javafx.base;
+    opens gruppocinque.bibliosoft.controller to javafx.fxml;
+    opens gruppocinque.bibliosoft.modelli to javafx.base;
 
-    exports gruppo5.bibliosoft;
+    exports gruppocinque.bibliosoft;
 }
