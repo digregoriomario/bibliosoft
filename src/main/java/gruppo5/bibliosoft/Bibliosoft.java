@@ -52,7 +52,7 @@ public class Bibliosoft extends Application {
         //instanzio gli archivi:
         Archivio archivio = new Archivio();
 
-        //istanzio i servizi:
+        //instanzio i servizi:
         ServizioLibri servizioLibri = new ServizioLibri(archivio);
         ServizioUtenti servizioUtenti = new ServizioUtenti(archivio);
         ServizioPrestiti servizioPrestiti = new ServizioPrestiti(archivio);
