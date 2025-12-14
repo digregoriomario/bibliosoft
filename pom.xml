@@ -4,7 +4,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>gruppo5.bibliosoft</groupId>
+    <groupId>gruppocinque.bibliosoft</groupId>
     <artifactId>bibliosoft</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>Bibliosoft</name>
@@ -15,11 +15,8 @@
 
         <javafx.version>21.0.2</javafx.version>
         <junit.jupiter.version>5.10.3</junit.jupiter.version>
-
-        <!-- nome modulo = quello in module-info.java -->
-        <module.name>gruppo5.bibliosoft</module.name>
-        <!-- classe con start() + main() -->
-        <main.class>gruppo5.bibliosoft.Bibliosoft</main.class>
+        <module.name>gruppocinque.bibliosoft</module.name>
+        <main.class>gruppocinque.bibliosoft.Bibliosoft</main.class>
     </properties>
 
     <dependencies>
@@ -34,7 +31,6 @@
             <version>${javafx.version}</version>
         </dependency>
 
-        <!-- JUnit: basta questo (include api + engine tramite BOM/aggregato) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -64,7 +60,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Avvio JavaFX (modulare) -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -79,5 +74,4 @@
 
         </plugins>
     </build>
-
 </project>
