@@ -44,10 +44,16 @@ import javafx.scene.layout.VBox;
  * @invariant {@code servizioPrestiti != null}
  */
 public class ControllerUtenti {
-
     //servizi per interagire con i dati:
     private ServizioUtenti servizioUtenti;
     private ServizioPrestiti servizioPrestiti;
+    
+    /**
+     * @brief Lista osservabile che funge da model per la TableView.
+     * @details Contiene i dati degli utenti filtrati e aggiornati, pronti per
+     * essere visualizzati secondo RF 3.4.2.
+     */
+    private final ObservableList<Utente> dati = FXCollections.observableArrayList();
 
     //attributi FXML:
     @FXML
@@ -66,13 +72,6 @@ public class ControllerUtenti {
     private TableColumn<Utente, Number> colonnaPrestiti;
 
     /**
-     * @brief Lista osservabile che funge da model per la TableView.
-     * @details Contiene i dati degli utenti filtrati e aggiornati, pronti per
-     * essere visualizzati secondo RF 3.4.2.
-     */
-    private final ObservableList<Utente> dati = FXCollections.observableArrayList();
-
-    /**
      * @brief Inizializza i servizi e configura lo stato iniziale della vista.
      * @details Inietta le dipendenze necessarie, configura le colonne della
      * tabella e carica la lista iniziale degli utenti.
@@ -86,10 +85,12 @@ public class ControllerUtenti {
      * @post La tabella è inizializzata e popolata con i dati correnti.
      */
     public void impostaServizi(ServizioUtenti servizioUtenti, ServizioPrestiti servizioPrestiti) {
+        //imposto i servizi necessari:
         this.servizioUtenti = servizioUtenti;
         this.servizioPrestiti = servizioPrestiti;
-        inizializzaTabella();
-        aggiorna();
+        
+        inizializzaTabella();   //inizializzo la tabella
+        aggiorna(); //aggiorno la vista
     }
 
     /**
@@ -99,15 +100,15 @@ public class ControllerUtenti {
      * Prestiti Attivi) e le proprietà dell'oggetto `Utente`.
      */
     private void inizializzaTabella() {
+        //inizializzo le colonne della tabella con le informazioni giuste:
         colonnaMatricola.setCellValueFactory(new PropertyValueFactory<>("matricola"));
         colonnaCognome.setCellValueFactory(new PropertyValueFactory<>("cognome"));
         colonnaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colonnaEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        colonnaPrestiti.setCellValueFactory(c
-                -> new javafx.beans.property.SimpleIntegerProperty(c.getValue().getPrestitiAttivi().size()));
+        colonnaPrestiti.setCellValueFactory(c-> new javafx.beans.property.SimpleIntegerProperty(c.getValue().getPrestitiAttivi().size()));
 
-        tabellaUtenti.setPlaceholder(new Label("Nessun utente presente"));
-        tabellaUtenti.setItems(dati);
+        tabellaUtenti.setPlaceholder(new Label("Nessun utente presente"));   //placeholder nel caso in cui non ci sono utenti (anche dopo la ricerca)
+        tabellaUtenti.setItems(dati);   //popolo la tabella
     }
 
     /**
@@ -119,9 +120,9 @@ public class ControllerUtenti {
      */
     @FXML
     private void onRicerca() {
-        String filtro = campoRicerca.getText();
-        List<Utente> result = servizioUtenti.cerca(filtro);
-        dati.setAll(result);
+        String filtro = campoRicerca.getText(); ///prelevo la stringa filtro dalla text field
+        List<Utente> risultati = servizioUtenti.cerca(filtro); //chiedo al servizio utenti di cercare in base al filtro
+        dati.setAll(risultati); //popolo la tabella
     }
 
     /**
@@ -135,15 +136,15 @@ public class ControllerUtenti {
      */
     @FXML
     private void onAggiungi() {
-        Dialog<Utente> finestraDialogo = creaDialogUtente(null);
-        finestraDialogo.setTitle("Nuovo utente");
-        finestraDialogo.showAndWait().ifPresent(u -> {
+        Dialog<Utente> finestraDialogo = creaDialogUtente(null);   //creo un nuovo dialog
+        finestraDialogo.setTitle("Nuovo utente"); //titolo del dialog
+        finestraDialogo.showAndWait().ifPresent(utente -> {   //aspetto che venga premuto OK per prendere i dati
             try {
-                servizioUtenti.aggiungiUtente(u);
-                ControllerPrincipale.modificheEffettuate = true;
-                aggiorna();
+                servizioUtenti.aggiungiUtente(utente); //chiedo al servizio utenti di aggiungere l'utente
+                ControllerPrincipale.modificheEffettuate = true;    //registro la modifica
+                aggiorna(); //aggiorno tutta la vista
             } catch (Exception ex) {
-                mostraErrore(ex.getMessage());
+                mostraErrore(ex.getMessage()); //eventuale errore di validazione dell'utente
             }
         });
     }
@@ -160,23 +161,20 @@ public class ControllerUtenti {
      */
     @FXML
     private void onModifica() {
-        Utente selezionato = tabellaUtenti.getSelectionModel().getSelectedItem();
-        if (selezionato == null) {
+        Utente selezionato = tabellaUtenti.getSelectionModel().getSelectedItem(); //prendo l'utente che il bibliotecario ha selezionato dalla tabella
+        if (selezionato == null) {  //se non ha selezionato nulla stampo un messaggio
             mostraErrore("Seleziona un utente.");
             return;
         }
-        Dialog<Utente> finestraDialogo = creaDialogUtente(selezionato);
-        finestraDialogo.setTitle("Modifica utente");
-        finestraDialogo.showAndWait().ifPresent(u -> {
+        Dialog<Utente> finestraDialogo = creaDialogUtente(selezionato);    //creo un dialog passando l'utente selezionato (così le text field saranno già popolate)
+        finestraDialogo.setTitle("Modifica utente");  //titolo del dialog
+        finestraDialogo.showAndWait().ifPresent(utente -> {   //aspetto che l'utente prema OK e prelevo i dati
             try {
-                selezionato.setNome(u.getNome());
-                selezionato.setCognome(u.getCognome());
-                selezionato.setEmail(u.getEmail());
-                servizioUtenti.modificaUtente(selezionato);
-                ControllerPrincipale.modificheEffettuate = true;
-                aggiorna();
+                servizioUtenti.modificaUtente(utente); //chiedo al servizio utenti di registrare le modifiche sull'utente
+                ControllerPrincipale.modificheEffettuate = true;    //registro la modifica
+                aggiorna(); //aggiorno tutta la vista
             } catch (Exception ex) {
-                mostraErrore(ex.getMessage());
+                mostraErrore(ex.getMessage());    //eventuale errore di validazione dell'utente
             }
         });
     }
@@ -194,30 +192,27 @@ public class ControllerUtenti {
      */
     @FXML
     private void onElimina() {
-        Utente selezionato = tabellaUtenti.getSelectionModel().getSelectedItem();
-        if (selezionato == null) {
+        Utente selezionato = tabellaUtenti.getSelectionModel().getSelectedItem();   //prendo il libro che il bibliotecario ha selezionato dalla tabella
+        if (selezionato == null) {  //controllo il caso in cui il bibliotecario non ha selezionato nulla  
             mostraErrore("Seleziona un utente.");
             return;
         }
-        if (selezionato.haPrestitiAttivi()) {
+        //***il seguente controllo è effettuato anche al livello di servizio ma lo ripeto qui affinchè l'alert di conferma non venga mostrato affatto in caso di errore***
+        if (selezionato.haPrestitiAttivi()) {    //controllo se l'utente ha prestiti attivi (se ha prestiti attivi non può essere eliminato)
             mostraErrore("L'utente selezionato ha dei prestiti attivi");
             return;
         }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                "Vuoi davvero eliminare l'utente selezionato?",
-                ButtonType.YES, ButtonType.NO);
-        alert.setHeaderText("Conferma eliminazione");
-        alert.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()
-        );
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Vuoi davvero eliminare l'utente selezionato?", ButtonType.YES, ButtonType.NO);   //creo un allert con un messaggio di conferma e due bottoni (cancella e ok)
+        alert.setHeaderText("Conferma eliminazione");   //intestazione dell'alert
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()); ///collego il relativo css
         alert.showAndWait().ifPresent(bt -> {
-            if (bt == ButtonType.YES) {
+            if (bt == ButtonType.YES) { //se il bibliotecario ha premuto ok...
                 try {
-                    servizioUtenti.eliminaUtente(selezionato);
-                    ControllerPrincipale.modificheEffettuate = true;
-                    aggiorna();
+                    servizioUtenti.eliminaUtente(selezionato);    //chiedo al servizio utenti di eliminare l'utente selezionato
+                    ControllerPrincipale.modificheEffettuate = true;    //registro la modifica
+                    aggiorna();//aggiorno tutta la vista
                 } catch (Exception ex) {
-                    mostraErrore(ex.getMessage());
+                    mostraErrore(ex.getMessage());  //eventuali errori
                 }
             }
         });
@@ -236,17 +231,16 @@ public class ControllerUtenti {
      */
     @FXML
     private void onStorico() {
-        Utente selezionato = tabellaUtenti.getSelectionModel().getSelectedItem();
-        if (selezionato == null) {
+        Utente selezionato = tabellaUtenti.getSelectionModel().getSelectedItem();   //prendo l'utente che il bibliotecario ha selezionato dalla tabella
+        if (selezionato == null) {  //se non ha selezionato nessun'utente mostro un errore
             mostraErrore("Seleziona un utente.");
             return;
         }
-        List<Prestito> storico = servizioPrestiti.storico(selezionato);
-        StringBuilder sb = new StringBuilder();
-        //In corso, ritardo -> Titolo - Inzio - Prevista - Stato
-        //Concluso -> Titolo - Inzio - Prevista  - Effettiva - Stato
-        for (Prestito prestito : storico) {
-            switch (prestito.getStato()) {
+        List<Prestito> storico = servizioPrestiti.storico(selezionato); //chiedo al servizio prestiti di generarmi lo storico per l'utente selezionato
+        StringBuilder sb = new StringBuilder(); //creo una string builder
+        
+        for (Prestito prestito : storico) { ///per ogni prestito della lista:
+            switch (prestito.getStato()) {  //in base allo stato del prestito cambiano i parametri da stampare...
                 case IN_CORSO:
                 case IN_RITARDO:
                     sb.append(prestito.getLibro().getTitolo())
@@ -266,17 +260,15 @@ public class ControllerUtenti {
                     break;
             }
         }
-        Label contenuto = new Label(sb.length() == 0 ? "Nessun prestito effettuato." : sb.toString());
-        contenuto.setWrapText(false);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Label contenuto = new Label(storico.isEmpty() ? "Nessun prestito effettuato." : sb.toString()); //label (se lo storico è vuoto stampo un messaggio altrimente stampo la string builder contenente lo storico)
+        contenuto.setWrapText(false);   //il testo non deve andare a capo
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);   //creo l'alert
 
-        alert.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()
-        );
-        alert.getDialogPane().setContent(contenuto);
-        alert.setHeaderText("Storico prestiti di " + selezionato);
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        alert.showAndWait();
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()); //collego il relativo css
+        alert.getDialogPane().setContent(contenuto);    //aggiungo la label all'alert
+        alert.setHeaderText("Storico prestiti di " + selezionato);  //intestazione dell'alert
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);   //l'alert deve avere l'altezza minima per mostrare ogni prestito dello storico
+        alert.showAndWait();    //mostro l'alert
     }
 
     /**
@@ -285,7 +277,7 @@ public class ControllerUtenti {
      * di filtri.
      */
     public void aggiorna() {
-        dati.setAll(servizioUtenti.listaUtenti());
+        dati.setAll(servizioUtenti.listaUtenti());  //popolo la tabella
     }
 
     /**
@@ -301,92 +293,91 @@ public class ControllerUtenti {
      * Utente.
      */
     private Dialog<Utente> creaDialogUtente(Utente iniziale) {
-        Dialog<Utente> dialog = new Dialog<>();
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        dialog.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()
-        );
+        Dialog<Utente> dialog = new Dialog<>();  //creo una nuova finestra di dialog
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);   //aggiungo alla finestra il pulsante annulla e ok
+        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/css/stile_dialog_alert.css").toExternalForm());    //collego il css relativo ai dialog
 
+        //creo tutte le textfield necessarie e aggiungo i relativi placeholder:
         TextField matricolaField = new TextField();
         matricolaField.setPromptText("Es. 123456");
-
         TextField nomeField = new TextField();
         nomeField.setPromptText("Es. Mario");
-
         TextField cognomeField = new TextField();
         cognomeField.setPromptText("Es. Rossi");
-
         TextField emailField = new TextField();
         emailField.setPromptText("Es. mario.rossi@studenti.unisa.it");
 
+        //se c'è un'utente iniziale (quindi  si tratta di una modifica):
         if (iniziale != null) {
+            //presetto tutte le textfield:
             matricolaField.setText(iniziale.getMatricola());
-            matricolaField.setDisable(true);
+            matricolaField.setDisable(true); //la matricola non può e non deve essere modificata
             nomeField.setText(iniziale.getNome());
             cognomeField.setText(iniziale.getCognome());
             emailField.setText(iniziale.getEmail());
         }
 
-        VBox contenitore = new VBox(10);
+        VBox contenitore = new VBox(20);
         contenitore.setPadding(new Insets(10, 20, 10, 20));
 
+        //riga 1: matricola
+        VBox rigaMatricola = new VBox(5);
+        Label labelMatricola = new Label("Matricola:");
+        labelMatricola.setMinWidth(150);
+        rigaMatricola.getChildren().addAll(labelMatricola, matricolaField);
+
+        ///riga 2: nome e cognmome
         VBox colNome = new VBox(5);
         Label labelNome = new Label("Nome:");
         labelNome.setMinWidth(150);
         colNome.getChildren().addAll(labelNome, nomeField);
-
         VBox colCognome = new VBox(5);
         Label labelCognome = new Label("Cognome:");
         labelCognome.setMinWidth(150);
         colCognome.getChildren().addAll(labelCognome, cognomeField);
-
         HBox rigaNomeCognome = new HBox(20);
         rigaNomeCognome.getChildren().addAll(colNome, colCognome);
 
-        VBox colMatricola = new VBox(5);
-        Label labelMatricola = new Label("Matricola:");
-        labelMatricola.setMinWidth(150);
-        colMatricola.getChildren().addAll(labelMatricola, matricolaField);
-
-        VBox colEmail = new VBox(5);
-        Label labelEmail = new Label("Email istituzionale:");
+        //riga 3: email
+        VBox rigaEmail = new VBox(5);
+        Label labelEmail = new Label("Email:");
         labelEmail.setMinWidth(150);
-        colEmail.getChildren().addAll(labelEmail, emailField);
+        rigaEmail.getChildren().addAll(labelEmail, emailField);
 
-        HBox rigaMatricolaEmail = new HBox(20);
-        rigaMatricolaEmail.getChildren().addAll(colMatricola, colEmail);
-
+        //aggiungo le 3 righe al contenitore principale
         contenitore.getChildren().addAll(
+                rigaMatricola,
                 rigaNomeCognome,
-                rigaMatricolaEmail
+                rigaEmail
         );
 
-        dialog.getDialogPane().setContent(contenitore);
+        dialog.getDialogPane().setContent(contenitore); //metto il contenitore nella finestra di dialogo
+        Node bottoneOk = dialog.getDialogPane().lookupButton(ButtonType.OK); //prelevo il bottone di conferma per fare il binding
 
-        Node okButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
-
-        okButton.disableProperty().bind(matricolaField.textProperty().isEmpty()
+        //faccio il binding del bottone con le textfield (il bottone è disabilitato a meno che tutte le textfield contengono qualcosa)
+        bottoneOk.disableProperty().bind(matricolaField.textProperty().isEmpty()
                 .or(nomeField.textProperty().isEmpty())
                 .or(cognomeField.textProperty().isEmpty())
                 .or(emailField.textProperty().isEmpty()));
 
-        dialog.setResultConverter(bt -> {
-            if (bt == ButtonType.OK) {
+        dialog.setResultConverter(bt -> {   //aspetto che il bibliotecario prema qualcosa
+            if (bt == ButtonType.OK) {  //se preme ok
                 try {
-                    String m = matricolaField.getText();
-                    String n = nomeField.getText();
-                    String c = cognomeField.getText();
-                    String e = emailField.getText();
-                    return new Utente(m, n, c, e);
+                    //prelevo i dati:
+                    String matricola = matricolaField.getText();
+                    String nome = nomeField.getText();
+                    String cognome = cognomeField.getText();
+                    String email = emailField.getText();
+                    return new Utente(matricola, nome, cognome, email); //restituisco il nuovo utente
                 } catch (Exception ex) {
-                    mostraErrore("Dati non validi: " + ex.getMessage());
+                    mostraErrore("Dati non validi: " + ex.getMessage());    //eventuali errori
                     return null;
                 }
             }
-            return null;
+            return null;   //se il bibliotecario non ha premuto ok restituisco null
         });
 
-        return dialog;
+        return dialog;  //restituisco la finestra di dialog
     }
 
     /**
@@ -398,11 +389,9 @@ public class ControllerUtenti {
      * @param[in] messaggio Il testo dell'errore da visualizzare.
      */
     private void mostraErrore(String messaggio) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, messaggio, ButtonType.OK);
-        alert.setHeaderText("Errore");
-        alert.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()
-        );
-        alert.showAndWait();
+        Alert alert = new Alert(Alert.AlertType.ERROR, messaggio, ButtonType.OK);   //creo un alert per gli errori con pulsante ok
+        alert.setHeaderText("Errore");  //intestazione
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()); //collego il relativo css
+        alert.showAndWait();    //mostro l'alert
     }
 }

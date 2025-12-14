@@ -30,7 +30,11 @@
     -fx-alignment: CENTER-LEFT;
     -fx-border-color: transparent;
     -fx-padding: 0 10 0 10;
-    -fx-text-fill: -fx-text-color;
+    -fx-text-fill: -fx-colore-testo-primario;
+}
+
+.date-picker .text-field{
+    -fx-border-color: transparent;
 }
 
 .table-row-cell {

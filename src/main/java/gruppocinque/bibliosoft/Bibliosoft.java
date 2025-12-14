@@ -11,11 +11,13 @@ import gruppocinque.bibliosoft.servizi.ServizioUtenti;
 import gruppocinque.bibliosoft.servizi.ServizioPrestiti;
 import gruppocinque.bibliosoft.controller.ControllerPrincipale;
 import gruppocinque.bibliosoft.archivi.Archivio;
+import gruppocinque.bibliosoft.modelli.Libro;
+import gruppocinque.bibliosoft.modelli.Utente;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -60,11 +62,11 @@ public class Bibliosoft extends Application {
         ServizioUtenti servizioUtenti = new ServizioUtenti(archivio);
         ServizioPrestiti servizioPrestiti = new ServizioPrestiti(archivio);
         ServizioArchivio servizioArchivio = new ServizioArchivio("archivio.dat", archivio);
-
+        
+                            
+        
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista_principale.fxml"));   //carico il file fxml contenente la menubar e le tab
         Scene scena = new Scene(loader.load()); //carico la scena
-
-        //scena.getStylesheets().add(getClass().getResource("/css/stile_principale.css").toExternalForm());   //aggiungo il foglio di stile alla scena
 
         ControllerPrincipale controller = loader.getController();   //instanzio il controller principale
         controller.inizializzaServizi(servizioLibri, servizioUtenti, servizioPrestiti, servizioArchivio);   //inizializzo i diversi servizi nel controller principale
@@ -74,7 +76,7 @@ public class Bibliosoft extends Application {
         });
         stage.setTitle("Bibliosoft - Gestionale Biblioteca");   //do un titolo allo stage
         stage.setScene(scena);  //setto la scena nello stage
-        stage.setMinWidth(900); //imposto una larghezza minima per lo stage (più di questo non può essere rimpicciolito
+        stage.setMinWidth(1000); //imposto una larghezza minima per lo stage (più di questo non può essere rimpicciolito
         stage.setMinHeight(600); //imposto un'altezza minima per lo stage (più di questo non può essere rimpicciolito
         stage.show();   //mostro lo stage
 
@@ -85,8 +87,6 @@ public class Bibliosoft extends Application {
             ex.printStackTrace();
         }
     }
-
-    
 
     /**
      * @brief Metodo main standard.

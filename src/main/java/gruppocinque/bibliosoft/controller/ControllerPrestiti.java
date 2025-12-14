@@ -26,6 +26,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -46,7 +47,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
  * @invariant servizioLibri != null
  */
 public class ControllerPrestiti {
-
     /**
      * @brief Strategia di filtro corrente per la visualizzazione della tabella.
      * @details Determina quali prestiti mostrare (Attivi, Conclusi o Tutti)
@@ -58,6 +58,13 @@ public class ControllerPrestiti {
     private ServizioPrestiti servizioPrestiti;
     private ServizioUtenti servizioUtenti;
     private ServizioLibri servizioLibri;
+    
+    /**
+     * @brief Lista osservabile che funge da model per la TableView.
+     * @details Contiene i dati dei prestiti filtrati e aggiornati, pronti per
+     * essere visualizzati secondo RF 3.4.2.
+     */
+    private final ObservableList<Prestito> dati = FXCollections.observableArrayList();
 
     //attributi FXML:
     @FXML
@@ -87,12 +94,7 @@ public class ControllerPrestiti {
     @FXML
     private Button bottoneTutti;
 
-    /**
-     * @brief Lista osservabile che funge da model per la TableView.
-     * @details Contiene i dati dei prestiti filtrati e aggiornati, pronti per
-     * essere visualizzati secondo RF 3.4.2.
-     */
-    private final ObservableList<Prestito> datiPrestiti = FXCollections.observableArrayList();
+    
 
     /**
      * @brief Inizializza i servizi e configura lo stato iniziale della vista.
@@ -109,13 +111,16 @@ public class ControllerPrestiti {
      * @post La tabella è inizializzata e popolata con i dati correnti.
      */
     public void impostaServizi(ServizioPrestiti servizioPrestiti, ServizioUtenti servizioUtenti, ServizioLibri servizioLibri) {
+        //inizializzo i servizi:
         this.servizioPrestiti = servizioPrestiti;
         this.servizioUtenti = servizioUtenti;
         this.servizioLibri = servizioLibri;
-        inizializzaTabella();
+        
+        inizializzaTabella(); //inizializzo la tabella
 
-        selezionaFiltro(bottoneAttivi);
-        aggiorna();
+        selezionaFiltro(bottoneAttivi); //il filtro iniziale deve essere "Attivi"
+        
+        aggiorna();//aggiorno tutta la vista
     }
 
     /**
@@ -127,15 +132,44 @@ public class ControllerPrestiti {
      * Verde per conclusi).
      */
     private void inizializzaTabella() {
+        //inizializzo le diverse colonne della tabella:
         colonnaUtente.setCellValueFactory(new PropertyValueFactory<>("utente"));
         colonnaLibro.setCellValueFactory(new PropertyValueFactory<>("libro"));
-        colonnaDataInizio.setCellValueFactory(new PropertyValueFactory<Prestito, java.time.LocalDate>("dataInizio"));
-        colonnaDataPrevista.setCellValueFactory(new PropertyValueFactory<Prestito, java.time.LocalDate>("dataPrevista"));
-        colonnaDataEffettiva.setCellValueFactory(new PropertyValueFactory<Prestito, java.time.LocalDate>("dataRestituzioneEffettiva"));
-        colonnaStato.setCellValueFactory(new PropertyValueFactory<Prestito, StatoPrestito>("stato"));
+        colonnaDataInizio.setCellValueFactory(new PropertyValueFactory<>("dataInizio"));
+        colonnaDataPrevista.setCellValueFactory(new PropertyValueFactory<>("dataPrevista"));
+        colonnaDataEffettiva.setCellValueFactory(new PropertyValueFactory<>("dataRestituzioneEffettiva"));
+        colonnaStato.setCellValueFactory(new PropertyValueFactory<>("stato"));
+        //funzione anonima per poter dare un colore diverso allo stato (Concluso -> verde, In corso -> arancione, In ritardo -> rosso):
+        colonnaStato.setCellFactory(col -> new TableCell<Prestito, StatoPrestito>() {
+            @Override
+            protected void updateItem(StatoPrestito elemento, boolean vuoto) {
+                super.updateItem(elemento, vuoto);
 
-        tabellaPrestiti.setPlaceholder(new Label("Nessun prestito presente"));
-        tabellaPrestiti.setItems(datiPrestiti);
+                if (vuoto || elemento == null) {
+                    setText(null);
+                    setStyle("");
+                    return;
+                }
+
+                setText(elemento.toString());
+                setStyle("");
+
+                switch (elemento) {
+                    case IN_RITARDO ->
+                        setStyle("-fx-text-fill: red;");
+
+                    case IN_CORSO ->
+                        setStyle("-fx-text-fill: orange;");
+
+                    case CONCLUSO ->
+                        setStyle("-fx-text-fill: green;");
+
+                }
+            }
+        });
+
+        tabellaPrestiti.setPlaceholder(new Label("Nessun prestito presente"));  //placeholder nel caso in cui non ci sono prestiti (anche dopo averli filtrati)
+        tabellaPrestiti.setItems(dati);    //popola la tabella
     }
 
     /**
@@ -147,9 +181,9 @@ public class ControllerPrestiti {
      */
     @FXML
     private void mostraAttivi(ActionEvent event) {
-        filtroCorrente = FiltroPrestito.filtraAttivi();
-        selezionaFiltro(bottoneAttivi);
-        aggiorna();
+        filtroCorrente = FiltroPrestito.filtraAttivi(); //cambio il filtro corrente e lo imposto su "Attivi"
+        selezionaFiltro(bottoneAttivi); 
+        aggiorna(); //aggiorno tutta la vista
     }
 
     /**
@@ -160,9 +194,9 @@ public class ControllerPrestiti {
      */
     @FXML
     private void mostraConclusi(ActionEvent event) {
-        filtroCorrente = FiltroPrestito.filtraConclusi();
+        filtroCorrente = FiltroPrestito.filtraConclusi(); //cambio il filtro corrente e lo imposto su "Conclusi"
         selezionaFiltro(bottoneConclusi);
-        aggiorna();
+        aggiorna(); //aggiorno tutta la vista
     }
 
     /**
@@ -172,9 +206,9 @@ public class ControllerPrestiti {
      */
     @FXML
     private void mostraTutti(ActionEvent event) {
-        filtroCorrente = null;
+        filtroCorrente = null;  //cambio il filtro corrente e lo imposto null in modo che restituisca l'intera lista di prestiti
         selezionaFiltro(bottoneTutti);
-        aggiorna();
+        aggiorna(); //aggiorno tutta la vista
     }
 
     /**
@@ -191,9 +225,8 @@ public class ControllerPrestiti {
         bottoneTutti.getStyleClass().remove("bottoni_filtro_attivo");
 
         // aggiungo lo stile "attivo" solo a quello selezionato
-        if (!attivo.getStyleClass().contains("bottoni_filtro_attivo")) {
+        if (! attivo.getStyleClass().contains("bottoni_filtro_attivo"))
             attivo.getStyleClass().add("bottoni_filtro_attivo");
-        }
     }
 
     /**
@@ -203,6 +236,7 @@ public class ControllerPrestiti {
      * esistenti.
      */
     private void aggiornaCombo() {
+        //popolo le due combo con i dati prelevati dai servizi:
         comboUtente.setItems(FXCollections.observableArrayList(servizioUtenti.listaUtenti()));
         comboLibro.setItems(FXCollections.observableArrayList(servizioLibri.listaLibri()));
     }
@@ -212,13 +246,13 @@ public class ControllerPrestiti {
      * @details Pulisce la selezione delle ComboBox e il DatePicker.
      */
     public void pulisciCampi() {
+        //pulisco le combo levando le selezioni:
         comboUtente.getSelectionModel().clearSelection();
         comboUtente.setValue(null);
-
         comboLibro.getSelectionModel().clearSelection();
         comboLibro.setValue(null);
 
-        dataPrevista.setValue(null);
+        dataPrevista.setValue(null);    //pulisco il datepicker
     }
 
     /**
@@ -231,34 +265,35 @@ public class ControllerPrestiti {
      *
      *
      * @post Se successo: Copie libro decrementate, nuovo prestito in lista.
-     * @post Se errore: Viene mostrato un alert all'utente.
+     * @post Se errore: Viene mostrato un alert al bibliotecario.
      */
     @FXML
     private void onRegistraPrestito() {
+        //prelevo i dati:
         Utente utente = comboUtente.getValue();
         Libro libro = comboLibro.getValue();
         LocalDate data = dataPrevista.getValue();
-        if (utente == null) {
+        if (utente == null) {   //se il bibliotecario non ha selezionato un utente mostro un errore
             mostraErrore("Seleziona utente");
             return;
         }
 
-        if (libro == null) {
+        if (libro == null) {   //se non ha selezionato un libro mostro un errore
             mostraErrore("Seleziona libro");
             return;
         }
 
-        if (data == null) {
+        if (data == null) {   //se non ha selezionato una data mostro un errore
             mostraErrore("Seleziona data di restituzione prevista");
             return;
         }
 
         try {
-            servizioPrestiti.registraPrestito(utente, libro, data);
-            ControllerPrincipale.modificheEffettuate = true;
-            aggiorna();
+            servizioPrestiti.registraPrestito(utente, libro, data); //chiedo al servizio prestiti di registrare il prestito
+            ControllerPrincipale.modificheEffettuate = true;    //registro la modifica
+            aggiorna(); //aggiorno tutta la vista
         } catch (Exception ex) {
-            mostraErrore(ex.getMessage());
+            mostraErrore(ex.getMessage());  //eventuali errori(l'utente ha raggiunto il massimo dei prestiti attivi o il libro non ha copie disponibili)
         }
     }
 
@@ -274,17 +309,17 @@ public class ControllerPrestiti {
      */
     @FXML
     private void onRegistraRestituzione() {
-        Prestito prestito = tabellaPrestiti.getSelectionModel().getSelectedItem();
-        if (prestito == null) {
+        Prestito prestito = tabellaPrestiti.getSelectionModel().getSelectedItem();  //prendo il prestito che il bibliotecario ha selezionato dalla tabella
+        if (prestito == null) { //se non ha selezionato nessun prestito stampo un errore
             mostraErrore("Seleziona un prestito da restituire.");
             return;
         }
         try {
-            servizioPrestiti.registraRestituzione(prestito);
-            ControllerPrincipale.modificheEffettuate = true;
-            aggiorna();
+            servizioPrestiti.registraRestituzione(prestito);    //chiedo al servizio prestiti di registrare la restituzione del prestito
+            ControllerPrincipale.modificheEffettuate = true;    //registro la modifica
+            aggiorna(); //aggiorno tutta la vista
         } catch (Exception ex) {
-            mostraErrore(ex.getMessage());
+            mostraErrore(ex.getMessage());  //eventuali errori (il prestito era già concluso)
         }
     }
 
@@ -296,12 +331,12 @@ public class ControllerPrestiti {
      * DatePicker per disabilitare date passate.
      */
     public void aggiorna() {
-        servizioPrestiti.aggiornaRitardi();
-        datiPrestiti.setAll(servizioPrestiti.cerca(filtroCorrente));
-        aggiornaCombo();
-        pulisciCampi();
+        servizioPrestiti.aggiornaRitardi(); //aggiorno i ritardi di ogni prestito
+        dati.setAll(servizioPrestiti.cerca(filtroCorrente));    //popola la tabella filtrata in base al filtro corrente
+        aggiornaCombo();    //aggiorno le combo con i dati sui libri e sugli utenti
+        pulisciCampi(); //mi assicuro che i campi siano puliti (non ci siano già selezioni)
 
-        dataPrevista.setDayCellFactory(dp -> new DateCell() {
+        dataPrevista.setDayCellFactory(dp -> new DateCell() {   //funzione anoniva per evitare la selezione di date pari a oggi o antecedenti
             @Override
             public void updateItem(LocalDate elemento, boolean vuoto) {
                 super.updateItem(elemento, vuoto);
@@ -323,11 +358,9 @@ public class ControllerPrestiti {
      * @param[in] messaggio Il testo dell'errore da visualizzare.
      */
     private void mostraErrore(String messaggio) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, messaggio, ButtonType.OK);
-        alert.setHeaderText("Errore");
-        alert.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()
-        );
-        alert.showAndWait();
+        Alert alert = new Alert(Alert.AlertType.ERROR, messaggio, ButtonType.OK);    //creo un alert per gli errori con pulsante ok  
+        alert.setHeaderText("Errore");  //intestazione
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/css/stile_dialog_alert.css").toExternalForm());//collego il relativo css
+        alert.showAndWait();    //mostro l'alert
     }
 }

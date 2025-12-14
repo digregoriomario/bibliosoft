@@ -52,6 +52,7 @@ public class ControllerDashboard {
      * @post Le etichette della GUI sono aggiornate con i valori correnti.
      */
     public void impostaServizi(ServizioPrestiti servizioPrestiti, ServizioUtenti servizioUtenti, ServizioLibri servizioLibri) {
+        //imposto i servizi e aggiorno:
         this.servizioPrestiti = servizioPrestiti;
         this.servizioUtenti = servizioUtenti;
         this.servizioLibri = servizioLibri;
@@ -65,6 +66,7 @@ public class ControllerDashboard {
      * riceve il focus.
      */
     public void aggiorna() {
+        //aggiorno tutte le tipologie di statistiche:
         aggiornaStatistichePrestiti();
         aggiornaStatisticheUtenti();
         aggiornaStatisticheLibri();
@@ -76,6 +78,7 @@ public class ControllerDashboard {
      * corso. Utile per monitorare lo stato di salute dei rientri (RF 3.1.3 - Gestione Prestiti).
      */
     public void aggiornaStatistichePrestiti() {
+        //riempo tutte le label con le relative statistiche:
         prestitiInRitardo.setText(Integer.toString(servizioPrestiti.getPrestitiInRitardo()));
         prestitiConclusi.setText(Integer.toString(servizioPrestiti.getPrestitiConclusi()));
         prestitiInCorso.setText(Integer.toString(servizioPrestiti.getPrestitiInCorso()));
@@ -87,6 +90,7 @@ public class ControllerDashboard {
      * hanno almeno un prestito attivo.
      */
     public void aggiornaStatisticheUtenti() {
+        //riempo tutte le label con le relative statistiche:
         utentiTotali.setText(Integer.toString(servizioUtenti.getUtentiTotali()));
         utentiPrestitiAttivi.setText(Integer.toString(servizioUtenti.getUtentiAttivi()));
     }
@@ -98,6 +102,7 @@ public class ControllerDashboard {
      * prestito.
      */
     public void aggiornaStatisticheLibri() {
+        //riempo tutte le label con le relative statistiche:
         libriTotali.setText(Integer.toString(servizioLibri.getLibriTotali()));
         copieTotali.setText(Integer.toString(servizioLibri.getCopieTotali()));
         copieDisponibili.setText(Integer.toString(servizioLibri.getCopieDisponibili()));

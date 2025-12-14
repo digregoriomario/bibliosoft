@@ -35,10 +35,14 @@ import javafx.scene.layout.VBox;
  * @invariant {@code servizioLibri != null}
  */
 public class ControllerLibri {
-
     private ServizioLibri servizioLibri;    //servizio libri con cui interagire per i dati
-
-    private final ObservableList<Libro> dati = FXCollections.observableArrayList();   //lista osservabile per poter popolare la tabella
+    
+    /**
+     * @brief Lista osservabile che funge da model per la TableView.
+     * @details Contiene i dati dei prestiti filtrati e aggiornati, pronti per
+     * essere visualizzati secondo RF 3.4.2.
+     */
+    private final ObservableList<Libro> dati = FXCollections.observableArrayList();
 
     //attributi fxml:
     @FXML
@@ -69,7 +73,7 @@ public class ControllerLibri {
     public void impostaServizi(ServizioLibri servizioLibri) {
         this.servizioLibri = servizioLibri; //inizializzo il servizio libri
         inizializzaTabella();   //inizializzo la tabella
-        aggiorna(); //agiorno tutto (dati ecc.)
+        aggiorna(); //aggiorno tutta la vista
     }
 
     /**
@@ -116,13 +120,13 @@ public class ControllerLibri {
     private void onAggiungi() {
         Dialog<Libro> dialog = creaDialogLibro(null);   //creo un nuovo dialog
         dialog.setTitle("Nuovo libro"); //titolo del dialog
-        dialog.showAndWait().ifPresent(libro -> {   //aspetto che venga premuto OK per prendere id ati
+        dialog.showAndWait().ifPresent(libro -> {   //aspetto che venga premuto OK per prendere i dati
             try {
                 servizioLibri.aggiungiLibro(libro); //chiedo al servizio libri di aggiungere il libro
-                ControllerPrincipale.modificheEffettuate = true;
-                aggiorna(); //aggiorno tutto
+                ControllerPrincipale.modificheEffettuate = true;    //registro la modifica
+                aggiorna(); //aggiorno tutta la vista
             } catch (Exception ex) {
-                mostraErrore(ex.getMessage());
+                mostraErrore(ex.getMessage());  //eventuale errore di validazione del libro
             }
         });
     }
@@ -145,24 +149,17 @@ public class ControllerLibri {
 
         Dialog<Libro> finestraDialog = creaDialogLibro(selezionato);    //creo un dialog passando il libro selezionato (così le text field saranno già popolate)
         finestraDialog.setTitle("Modifica libro");  //titolo del dialog
-        finestraDialog.showAndWait().ifPresent(libro -> {   //aspetto che l'utente prema OK e prelevo i dati
+        finestraDialog.showAndWait().ifPresent(libro -> {   //aspetto che il bibliotecario prema OK e prelevo i dati
             try {
-                /*selezionato.setTitolo(libro.getTitolo());   //setto la modifica al titolo
-                selezionato.setAutori(libro.getAutori());   //setto la modifica agli autori
-                selezionato.setAnnoPubblicazione(libro.getAnnoPubblicazione()); //setto la modifica all'anno di pubblicazione*/
-
-                if (libro.getCopieTotali() < selezionato.getCopieInPrestito()) //quest controllo è effettuato anche dal livello di servizio ma lo ripeto qui affinchè in caso di errore il dialog per modificare non venga mostrato affatto
-                {
+                //***il seguente controllo è effettuato anche al livello di servizio ma lo ripeto qui affinchè il dialog non venga mostrato affatto in caso di errore***             
+                if (libro.getCopieTotali() < selezionato.getCopieInPrestito())//controllo se il bibliotecario ha inserito un numero di copie totali inferiore al numero di copie già in prestito
                     throw new IllegalStateException("Devi inserire un numero di copie totali > " + selezionato.getCopieInPrestito() + " (copie disponibili)");
-                }
-
-                /*selezionato.setCopieDisponibili(selezionato.getCopieDisponibili() + libro.getCopieTotali() - selezionato.getCopieTotali());
-                selezionato.setCopieTotali(libro.getCopieTotali());*/
-                servizioLibri.modificaLibro(libro);
-                ControllerPrincipale.modificheEffettuate = true;
-                aggiorna();
+                
+                servizioLibri.modificaLibro(libro); //chiedo al servizio libri di registrare le modifiche sul libro
+                ControllerPrincipale.modificheEffettuate = true;    //registro la modifica
+                aggiorna(); //aggiorno tutta la vista
             } catch (Exception ex) {
-                mostraErrore(ex.getMessage());
+                mostraErrore(ex.getMessage());    //eventuale errore di validazione del libro
             }
         });
     }
@@ -171,42 +168,39 @@ public class ControllerLibri {
      * @brief Gestisce l'eliminazione di un libro.
      * @details Implementa il Caso d'Uso 4 (Cancellazione libro). Verifica
      * preventivamente se il libro ha prestiti attivi (violazione vincoli).
-     * Chiede conferma all'utente prima di procedere.
+     * Chiede conferma al bibliotecario prima di procedere.
      *
      * @pre Deve essere selezionato un libro.
      * @pre Il libro non deve avere prestiti attivi.
      * @post Se l'operazione ha successo, il libro è rimosso e la tabella
      * aggiornata.
      * @post Se si verifica un errore (es. prestiti attivi), viene mostrato un
-     * Alert all'utente.
+     * Alert al bibliotecario.
      */
     @FXML
     private void onElimina() {
-        Libro selezionato = tabellaLibri.getSelectionModel().getSelectedItem();
-        if (selezionato == null) {
+        Libro selezionato = tabellaLibri.getSelectionModel().getSelectedItem(); //prendo il libro che il bibliotecario ha selezionato dalla tabella
+        if (selezionato == null) {  //controllo il caso in cui il bibliotecario non ha selezionato nulla  
             mostraErrore("Seleziona un libro da eliminare.");
             return;
         }
-        if (selezionato.haPrestitiAttivi()) {    //aggiunto prima (anche se presente nel servizioLibri) per mostrare prima l'errore
+        //***il seguente controllo è effettuato anche al livello di servizio ma lo ripeto qui affinchè l'alert di conferma non venga mostrato affatto in caso di errore***
+        if (selezionato.haPrestitiAttivi()) {    //controllo se il libro ha prestiti attivi (se ha prestiti attivi non può essere eliminato)
             mostraErrore("Impossibile eliminare: libro in prestito o senza copie disponibili");
             return;
         }
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                "Vuoi davvero eliminare il libro selezionato?",
-                ButtonType.YES, ButtonType.NO);
-        alert.setHeaderText("Conferma eliminazione");
-        alert.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()
-        );
-        alert.showAndWait().ifPresent(bt -> {
-            if (bt == ButtonType.YES) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Vuoi davvero eliminare il libro selezionato?", ButtonType.YES, ButtonType.NO);   //creo un allert con un messaggio di conferma e due bottoni (cancella e ok)
+        alert.setHeaderText("Conferma eliminazione");   //intestazione dell'alert
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()); //collego il css per gli alert
+        alert.showAndWait().ifPresent(bt -> {   //aspetto che il bibliotecario prema un pulsante
+            if (bt == ButtonType.YES) { //se il bibliotecario ha premuto ok...
                 try {
-                    servizioLibri.eliminaLibro(selezionato);
-                    ControllerPrincipale.modificheEffettuate = true;
-                    aggiorna();
+                    servizioLibri.eliminaLibro(selezionato);    //chiedo al servizio libri di eliminare il libro selezionato
+                    ControllerPrincipale.modificheEffettuate = true;    //registro la modifica
+                    aggiorna(); //aggiorno tutta la vista
                 } catch (Exception ex) {
-                    mostraErrore(ex.getMessage());
+                    mostraErrore(ex.getMessage());  //eventuali errori
                 }
             }
         });
@@ -217,7 +211,7 @@ public class ControllerLibri {
      * @details Invocato dopo ogni modifica o cambio tab.
      */
     public void aggiorna() {
-        dati.setAll(servizioLibri.listaLibri());
+        dati.setAll(servizioLibri.listaLibri());    //popolo la tabella con i nuovi dati
     }
 
     /**
@@ -230,126 +224,117 @@ public class ControllerLibri {
      * @return Dialog configurato con i campi di input e validazione base.
      */
     private Dialog<Libro> creaDialogLibro(Libro iniziale) {
-        Dialog<Libro> finestraDialog = new Dialog<>();
-        finestraDialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        finestraDialog.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()
-        );
+        Dialog<Libro> finestraDialog = new Dialog<>();  //creo una nuova finestra di dialog
+        finestraDialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);   //aggiungo alla finestra il pulsante annulla e ok
+        finestraDialog.getDialogPane().getStylesheets().add(getClass().getResource("/css/stile_dialog_alert.css").toExternalForm());    //collego il css relativo ai dialog
 
+        //creo tutte le textfield necessarie e aggiungo i relativi placeholder:
         TextField isbnField = new TextField();
         isbnField.setPromptText("Es. 9788800000000");
-
         TextField titoloField = new TextField();
         titoloField.setPromptText("Es. Il nome della rosa");
-
         TextField autoriField = new TextField();
         autoriField.setPromptText("(autori separati dalla ,)");
-
         TextField annoField = new TextField();
         annoField.setPromptText("Es. 2020");
-
         TextField copieField = new TextField();
         copieField.setPromptText("Es. 5");
         
+        //se c'è un libro iniziale (quindi  si tratta di una modifica):
         if (iniziale != null) {
+            //presetto tutte le textfield:
             isbnField.setText(iniziale.getIsbn());
-            isbnField.setDisable(true);
+            isbnField.setDisable(true); //l'isbn non può e non deve essere modificato
             titoloField.setText(iniziale.getTitolo());
             autoriField.setText(String.join(", ", iniziale.getAutori()));
             annoField.setText(String.valueOf(iniziale.getAnnoPubblicazione()));
             copieField.setText(String.valueOf(iniziale.getCopieTotali()));
         }
 
-        VBox contenitore = new VBox(20);
-        contenitore.setPadding(new Insets(10, 20, 10, 20));
+        VBox contenitore = new VBox(20);    //contenitore generico
+        contenitore.setPadding(new Insets(10, 20, 10, 20)); //padiing
 
-        // === RIGA 1: solo ISBN ===
+        //riga 1: isbn
         VBox rigaIsbn = new VBox(5);
         Label labelIsbn = new Label("ISBN:");
         labelIsbn.setMinWidth(150);
         rigaIsbn.getChildren().addAll(labelIsbn, isbnField);
 
-        // === RIGA 2: Titolo + Autori affiancati ===
+        ///riga 2: titolo e autori
         VBox colTitolo = new VBox(5);
         Label labelTitolo = new Label("Titolo:");
         labelTitolo.setMinWidth(150);
         colTitolo.getChildren().addAll(labelTitolo, titoloField);
-
         VBox colAutori = new VBox(5);
         Label labelAutori = new Label("Autori:");
         labelAutori.setMinWidth(150);
         colAutori.getChildren().addAll(labelAutori, autoriField);
-
         HBox rigaTitoloAutori = new HBox(20);
         rigaTitoloAutori.getChildren().addAll(colTitolo, colAutori);
 
-        // === RIGA 3: Anno + Copie totali affiancati ===
+        //riga 3: anno di pubblicazione e copie totali
         VBox colAnno = new VBox(5);
         Label labelAnno = new Label("Anno:");
         labelAnno.setMinWidth(150);
         colAnno.getChildren().addAll(labelAnno, annoField);
-
         VBox colCopie = new VBox(5);
         Label labelCopie = new Label("Copie totali:");
         labelCopie.setMinWidth(150);
         colCopie.getChildren().addAll(labelCopie, copieField);
-
         HBox rigaAnnoCopie = new HBox(20);
         rigaAnnoCopie.getChildren().addAll(colAnno, colCopie);
 
-        // Aggiungo solo le 3 righe al contenitore principale
+        //aggiungo le 3 righe al contenitore principale
         contenitore.getChildren().addAll(
                 rigaIsbn,
                 rigaTitoloAutori,
                 rigaAnnoCopie
         );
 
-        finestraDialog.getDialogPane().setContent(contenitore);
+        finestraDialog.getDialogPane().setContent(contenitore); //metto il contenitore nella finestra di dialogo
 
-        // === BINDING: disabilita OK finché non sono tutti pieni ===
-        Node okButton = finestraDialog.getDialogPane().lookupButton(ButtonType.OK);
+        Node bottoneOk = finestraDialog.getDialogPane().lookupButton(ButtonType.OK); //prelevo il bottone di conferma per fare il binding
 
-        okButton.disableProperty().bind(
+        //faccio il binding del bottone con le textfield (il bottone è disabilitato a meno che tutte le textfield contengono qualcosa)
+        bottoneOk.disableProperty().bind(
                 isbnField.textProperty().isEmpty()
                         .or(titoloField.textProperty().isEmpty())
                         .or(autoriField.textProperty().isEmpty())
                         .or(annoField.textProperty().isEmpty())
                         .or(copieField.textProperty().isEmpty())
         );
-        // =========================================
 
-        finestraDialog.setResultConverter(bt -> {
-            if (bt == ButtonType.OK) {
+        finestraDialog.setResultConverter(bt -> {   //aspetto che il bibliotecario prema qualcosa
+            if (bt == ButtonType.OK) {  //se preme ok
                 try {
+                    //prelevo i dati e faccio i parsing e le conversioni necessarie:
                     String isbn = isbnField.getText();
                     String titolo = titoloField.getText();
                     List<String> autori = Arrays.asList(autoriField.getText().split("\\s*,\\s*"));
                     int anno = Integer.parseInt(annoField.getText());
                     int copie = Integer.parseInt(copieField.getText());
-                    return new Libro(isbn, titolo, autori, anno, copie);
+                    return new Libro(isbn, titolo, autori, anno, copie);    //restituisco il nuovo libro
                 } catch (Exception ex) {
-                    mostraErrore("Dati non validi: " + ex.getMessage());
+                    mostraErrore("Dati non validi: " + ex.getMessage());    //eventuali errodi (di parsing ecc.)
                     return null;
                 }
             }
-            return null;
+            return null;    //se il bibliotecario non ha premuto ok restituisco null
         });
 
-        return finestraDialog;
+        return finestraDialog;  //restituisco la finestra di dialog
     }
 
     /**
      * @brief Mostra un alert di errore standardizzato.
      * @details Implementa il Requisito Non Funzionale 4.1.2 (Feedback errore).
      *
-     * @param[in] messaggio Il testo dell'errore da mostrare all'utente.
+     * @param[in] messaggio Il testo dell'errore da mostrare al bibliotecario.
      */
     private void mostraErrore(String messaggio) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, messaggio, ButtonType.OK);
-        alert.setHeaderText("Errore");
-        alert.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()
-        );
-        alert.showAndWait();
+        Alert alert = new Alert(Alert.AlertType.ERROR, messaggio, ButtonType.OK);   //creo un alert per gli errori con pulsante ok
+        alert.setHeaderText("Errore");  //intestazione
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/css/stile_dialog_alert.css").toExternalForm()); //collego il relativo css
+        alert.showAndWait();    //mostro l'alert
     }
 }

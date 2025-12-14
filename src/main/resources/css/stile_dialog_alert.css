@@ -15,3 +15,10 @@
 .button:hover {
     -fx-background-color: #F2F2F7;
 }
+
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #D1D1D6;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}

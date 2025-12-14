@@ -70,10 +70,9 @@ public class Validatore {
                 throw new IllegalArgumentException("Autore vuoto");
             }
 
-            if (!autore.matches("^[A-Za-zÀ-ÖØ-öø-ÿ .]+(,[A-Za-zÀ-ÖØ-öø-ÿ .]+)*$")) {
+            if (!autore.matches("^[A-Za-zÀ-ÖØ-öø-ÿ .-]+(?:,\\s*[A-Za-zÀ-ÖØ-öø-ÿ .-]+)*$")) {
                 throw new IllegalArgumentException("Autore non valido");
             }
-
         }
     }
 

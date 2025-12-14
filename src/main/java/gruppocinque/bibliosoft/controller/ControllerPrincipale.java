@@ -71,7 +71,7 @@ public class ControllerPrincipale {
 
     /**
      * @brief Gestisce il cambio di tab nell'interfaccia.
-     * @details Invocato quando l'utente seleziona una scheda diversa. Aggiorna
+     * @details Invocato quando il bibliotecario seleziona una scheda diversa. Aggiorna
      * tutte le viste per garantire coerenza dei dati visualizzati.
      */
     @FXML
@@ -112,11 +112,11 @@ public class ControllerPrincipale {
      */
     private void caricaVistaDashboard() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista_dashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista_dashboard.fxml"));   //carico l'fxml
             Node content = loader.load();
-            controllerDashboard = loader.getController();
-            controllerDashboard.impostaServizi(servizioPrestiti, servizioUtenti, servizioLibri);
-            tabDashboard.setContent(content);
+            controllerDashboard = loader.getController();   //prelevo il controller
+            controllerDashboard.impostaServizi(servizioPrestiti, servizioUtenti, servizioLibri);    //imposto i servizi neccesari
+            tabDashboard.setContent(content);   //imposto la tab
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,11 +127,12 @@ public class ControllerPrincipale {
      */
     private void caricaVistaLibri() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista_libri.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista_libri.fxml"));   //carico l'fxml
             Node content = loader.load();
-            controllerLibri = loader.getController();
+            controllerLibri = loader.getController();   //prelevo il controller
             controllerLibri.impostaServizi(servizioLibri);
-            tabLibri.setContent(content);
+            controllerDashboard.impostaServizi(servizioPrestiti, servizioUtenti, servizioLibri);    //imposto i servizi neccesari
+            tabLibri.setContent(content);   //imposto la tab
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -142,11 +143,11 @@ public class ControllerPrincipale {
      */
     private void caricaVistaUtenti() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista_utenti.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista_utenti.fxml"));   //carico l'fxml
             Node content = loader.load();
-            controllerUtenti = loader.getController();
-            controllerUtenti.impostaServizi(servizioUtenti, servizioPrestiti);
-            tabUtenti.setContent(content);
+            controllerUtenti = loader.getController();   //prelevo il controller
+            controllerUtenti.impostaServizi(servizioUtenti, servizioPrestiti);    //imposto i servizi neccesari
+            tabUtenti.setContent(content);   //imposto la tab
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -157,11 +158,11 @@ public class ControllerPrincipale {
      */
     private void caricaVistaPrestiti() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista_prestiti.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista_prestiti.fxml"));   //carico l'fxml
             Node content = loader.load();
-            controllerPrestiti = loader.getController();
-            controllerPrestiti.impostaServizi(servizioPrestiti, servizioUtenti, servizioLibri);
-            tabPrestiti.setContent(content);
+            controllerPrestiti = loader.getController();   //prelevo il controller
+            controllerPrestiti.impostaServizi(servizioPrestiti, servizioUtenti, servizioLibri);    //imposto i servizi neccesari
+            tabPrestiti.setContent(content);   //imposto la tab
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -173,18 +174,15 @@ public class ControllerPrincipale {
      * condivisi.
      */
     public void aggiornaTutto() {
-        if (controllerDashboard != null) {
+        //se i controller sono istanziati aggiorno le relative viste:
+        if (controllerDashboard != null)
             controllerDashboard.aggiorna();
-        }
-        if (controllerLibri != null) {
+        if (controllerLibri != null)
             controllerLibri.aggiorna();
-        }
-        if (controllerUtenti != null) {
+        if (controllerUtenti != null)
             controllerUtenti.aggiorna();
-        }
-        if (controllerPrestiti != null) {
+        if (controllerPrestiti != null)
             controllerPrestiti.aggiorna();
-        }
     }
 
     /**
@@ -200,13 +198,14 @@ public class ControllerPrincipale {
     @FXML
     private void onSalvaArchivio(ActionEvent event) {
         try {
-            servizioArchivio.salva();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Salvataggio completato con successo");
-            modificheEffettuate = false;
-            alert.showAndWait();
+            servizioArchivio.salva();   //chiedo al servizio archivio di salvare l'intero archivio
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);   //creo l'alert
+            alert.setHeaderText("Salvataggio completato con successo"); //intestazione
+            modificheEffettuate = false;    //registro la modifica
+            alert.showAndWait();    //mostro l'alert
         } catch (Exception ex) {
             ex.printStackTrace();
+            //mostro l'alert in caso di errore:
             Alert alert = new Alert(Alert.AlertType.ERROR, "Errore durante il salvataggio.");
             alert.setHeaderText("Errore");
             alert.showAndWait();
@@ -217,7 +216,7 @@ public class ControllerPrincipale {
      * @brief Gestisce la richiesta di chiusura dell'applicazione.
      * @details Implementa il Caso d'Uso 17 (Chiusura applicazione). Controlla
      * se ci sono modifiche alla flag modificheEffettuate. In caso positivo,
-     * chiede conferma all'utente se salvare, scartare o annullare.
+     * chiede conferma al bibliotecario se salvare, scartare o annullare.
      *
      * @param[in] event L'evento di chiusura.
      *
@@ -226,57 +225,45 @@ public class ControllerPrincipale {
      */
     @FXML
     public void chiudiApplicazione(Event event) {
-        // Se l'utente ha fatto ANNULLA o c'è stato errore -> non chiudere
+        //se il bibliotecario ha fatto ANNULLA o c'è stato errore non chiudo
         if (!chiediSeChiudere()) {
-            if (event != null) {
-                event.consume(); // vale sia per WindowEvent che per ActionEvent
-            }
+            if (event != null)
+                event.consume(); //consumo l'evento
             return;
         }
 
-        // Arrivati qui: utente ha scelto YES (salvato) o NO (non salvare ma uscire)
-        if (event instanceof WindowEvent) {
-            // è una richiesta di chiusura finestra (X o CMD+Q via JavaFX):
-            // NON faccio nulla -> lascio che JavaFX chiuda da solo la Stage
-            return;
-        }
-
-        // Evento da MenuItem / pulsante: chiudo io la finestra
-        root.getScene().getWindow().hide();
+        //se il bibliotecario ha scelto SI o NO (non salvare ma uscire):
+        
+        if (event instanceof WindowEvent) //se è una richiesta di chiusura finestra (Alt + F4 su Windows o cmd + Q su Mac)
+            return; //non faccio nulla e lascio che sia javaFX a chiuedere
+        
+        root.getScene().getWindow().hide(); //chiuedo la finestra
     }
     
     private boolean chiediSeChiudere() {
-        if (!modificheEffettuate) {
-            return true; // nessuna modifica -> si può chiudere subito
-        }
+        if (!modificheEffettuate)   //se non ci sono modifiche posso chiudere direttamente
+            return true;
 
-        Alert alert = new Alert(
-                Alert.AlertType.CONFIRMATION,
-                "Ci sono modifiche non salvate. Vuoi salvare prima di uscire?",
-                ButtonType.CANCEL, ButtonType.NO, ButtonType.YES
-        );
-
+        //creo l'alert per chiedere conferma della chiusura:
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Ci sono modifiche non salvate. Vuoi salvare prima di uscire?", ButtonType.CANCEL, ButtonType.NO, ButtonType.YES);
         alert.setHeaderText("Conferma chiusura");
         alert.initModality(Modality.WINDOW_MODAL);
 
-        ButtonType risposta = alert.showAndWait().orElse(ButtonType.CANCEL);
+        ButtonType risposta = alert.showAndWait().orElse(ButtonType.CANCEL);    //prelevo la risposta
 
-        if (risposta == ButtonType.CANCEL) {
-            return false; // non chiudere
-        }
+        if (risposta == ButtonType.CANCEL)  //se la risposta è ANNULLA non faccio nulla
+            return false;
 
-        if (risposta == ButtonType.YES) {
+        if (risposta == ButtonType.YES) {   //se la risposta è YES...
             try {
-                servizioArchivio.salva();
-                modificheEffettuate = false;
-                return true; // salvataggio ok -> chiudi
+                servizioArchivio.salva();   //chiedo al servizio archivio di salvare l'intero archivio
+                modificheEffettuate = false;    //registro la modifica
+                return true; //il salvataggio è andato a buon fine, quindi posso chiudere
             } catch (Exception ex) {
                 ex.printStackTrace();
-                return false; // errore nel salvataggio -> meglio non chiudere
+                return false; //il salvataggio non è andato a buon fine, quindi non posso chiudere
             }
         }
-
-        // risposta == NO -> non salvare ma chiudi comunque
-        return true;
+        return true;    //se la risposta è NO posso chiudere a prescindere
     }
 }
