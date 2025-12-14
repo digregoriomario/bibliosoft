@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: gruppocinque.bibliosoft.archivi.SottoarchivioTest
--------------------------------------------------------------------------------
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.003 s -- in gruppocinque.bibliosoft.archivi.SottoarchivioTest
