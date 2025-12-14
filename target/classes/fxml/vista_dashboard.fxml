@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fillWidth="false" spacing="10" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gruppocinque.bibliosoft.controller.ControllerDashboard">
+   <padding>
+      <Insets bottom="10" left="10" right="10" top="10" />
+   </padding>
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="20.0">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../img/icona_bibliosoft.png" />
+               </image>
+            </ImageView>
+            <VBox alignment="CENTER_LEFT">
+               <children>
+                  <Label id="titolo" text="Bibliosoft" />
+                  <Label styleClass="sottotitolo" text="Bentornato, Bibliotecario" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <VBox>
+         <children>
+            <Label styleClass="sottotitolo" text="Prestiti" />
+            <HBox fillHeight="false" spacing="40.0" styleClass="rettangolo" VBox.vgrow="NEVER">
+               <children>
+                  <VBox>
+                     <children>
+                        <HBox alignment="CENTER" spacing="5.0">
+                           <children>
+                              <Label styleClass="statistica" text="In Ritardo" />
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/rosso.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                        <Label fx:id="prestitiInRitardo" styleClass="contatore" text="--">
+                          
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <HBox alignment="CENTER" spacing="5.0">
+                           <children>
+                              <Label styleClass="statistica" text="Conclusi" />
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/verde.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                        <Label fx:id="prestitiConclusi" styleClass="contatore" text="--">
+                           
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <HBox alignment="CENTER" spacing="5.0" styleClass="statistica">
+                           <children>
+                              <Label styleClass="statistica" text="In Corso" />
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/arancione.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                        <Label fx:id="prestitiInCorso" styleClass="contatore" text="--">
+                          
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+         <VBox.margin>
+            <Insets left="20.0" />
+         </VBox.margin>
+      </VBox>
+      <VBox>
+         <VBox.margin>
+            <Insets left="20.0" />
+         </VBox.margin>
+      </VBox>
+      <VBox>
+         <children>
+            <Label styleClass="sottotitolo" text="Libri" />
+            <HBox alignment="CENTER_LEFT" spacing="40.0" styleClass="rettangolo">
+               <children>
+                  <HBox alignment="CENTER" spacing="5.0">
+                     <children>
+                        <Label fx:id="libriTotali" styleClass="contatore" text="--">
+                                       
+                                    </Label>
+                        <Label styleClass="statistica" text="Libri Totali" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" spacing="5.0">
+                     <children>
+                        <Label fx:id="copieTotali" styleClass="contatore" text="--">
+                                       
+                                    </Label>
+                        <Label styleClass="statistica" text="Copie Totali" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" spacing="5.0">
+                     <children>
+                        <Label fx:id="copieDisponibili" styleClass="contatore" text="--">
+                                       
+                                    </Label>
+                        <Label styleClass="statistica" text="Copie Disponibili" />
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+            </HBox>
+         </children>
+         <VBox.margin>
+            <Insets left="20.0" />
+         </VBox.margin>
+      </VBox>
+      <VBox>
+         <children>
+            <Label styleClass="sottotitolo" text="Utenti" />
+            <HBox alignment="CENTER_LEFT" spacing="40.0" styleClass="rettangolo">
+               <children>
+                  <HBox alignment="CENTER" spacing="5.0">
+                     <children>
+                        <Label fx:id="utentiTotali" styleClass="contatore" text="--">
+                                    </Label>
+                        <Label styleClass="statistica" text="Utenti Totali" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" spacing="5.0">
+                     <children>
+                        <Label fx:id="utentiPrestitiAttivi" styleClass="contatore" text="--">
+                                    </Label>
+                        <Label styleClass="statistica" text="Utenti con prestiti attivi" />
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+            </HBox>
+         </children>
+         <VBox.margin>
+            <Insets left="20.0" />
+         </VBox.margin>
+      </VBox>
+   </children>
+   <stylesheets>
+      <URL value="@../css/stile_dashboard.css" />
+      <URL value="@../css/stile_generale.css" />
+   </stylesheets>
+</VBox>

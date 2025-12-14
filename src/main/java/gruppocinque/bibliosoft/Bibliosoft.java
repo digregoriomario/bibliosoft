@@ -77,7 +77,7 @@ public class Bibliosoft extends Application {
         stage.setTitle("Bibliosoft - Gestionale Biblioteca");   //do un titolo allo stage
         stage.setScene(scena);  //setto la scena nello stage
         stage.setMinWidth(1000); //imposto una larghezza minima per lo stage (più di questo non può essere rimpicciolito
-        stage.setMinHeight(600); //imposto un'altezza minima per lo stage (più di questo non può essere rimpicciolito
+        stage.setMinHeight(700); //imposto un'altezza minima per lo stage (più di questo non può essere rimpicciolito
         stage.show();   //mostro lo stage
 
         try {

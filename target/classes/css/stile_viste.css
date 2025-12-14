@@ -1,0 +1,123 @@
+.table-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-color: #D1D1D6;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #E5E5EA;
+}
+
+.table-view .column-header {
+    
+    -fx-background-color: transparent;
+    -fx-size: 40px;
+}
+
+.table-view .column-header .label {
+    -fx-padding: 0 0 0 10;
+    -fx-alignment: CENTER-LEFT;
+    -fx-text-fill: -fx-colore-testo-secondario;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-text-transform: uppercase;
+}
+
+.table-view .table-cell {
+    -fx-alignment: CENTER-LEFT;
+    -fx-border-color: transparent;
+    -fx-padding: 0 10 0 10;
+    -fx-text-fill: -fx-colore-testo-primario;
+}
+
+.date-picker .text-field{
+    -fx-border-color: transparent;
+}
+
+.table-row-cell {
+    -fx-background-color: -fx-colore-rettangolo;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #F2F2F7;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: -fx-colore-rettangolo;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #E4EFFF;
+    -fx-table-cell-border-color: transparent;
+}
+.text-field, .date-picker, .combo-box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D1D1D6;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 10px;
+    -fx-padding: 0px 0px 0px 5px;
+}
+
+.text-field:focused, .combo-box:focused {
+    -fx-border-color: -fx-colore-testo-primario;
+}
+
+.button {
+    -fx-background-color: white;
+    -fx-text-fill: -fx-colore-testo-primario;
+    -fx-font-weight: 600;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-border-color: #E5E5EA;
+    -fx-border-radius: 8px;
+}
+
+.button:hover {
+    -fx-background-color: #F2F2F7;
+}
+
+.bottone-primario {
+    -fx-background-color: -fx-colore-primario;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.bottone-primario:hover {
+    -fx-background-color: #0062CC;
+}
+
+.bottone-pericolo {
+    -fx-text-fill: -fx-colore-pericolo;
+    -fx-background-color: rgba(255, 59, 48, 0.1);
+    -fx-border-color: transparent;
+}
+
+.bottone-pericolo:hover {
+    -fx-background-color: -fx-colore-pericolo;
+    -fx-text-fill: white;
+}
+
+.bottoni_filtro {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-colore-testo-secondario;
+    -fx-border-color: transparent;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.bottoni_filtro:hover {
+    -fx-background-color: rgba(118, 118, 128, 0.12);
+}
+
+.bottoni_filtro_attivo {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+}
+
+#rettangolo-filtri{
+    -fx-background-color: #E5E5EA;
+    -fx-background-radius: 8px;
+    -fx-padding: 3;
+}

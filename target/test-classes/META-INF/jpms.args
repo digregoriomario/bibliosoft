@@ -1,0 +1,4 @@
+--patch-module
+gruppocinque.bibliosoft=_
+--add-reads
+gruppocinque.bibliosoft=ALL-UNNAMED
