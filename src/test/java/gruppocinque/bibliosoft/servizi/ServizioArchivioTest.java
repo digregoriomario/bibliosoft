@@ -36,7 +36,7 @@ public class ServizioArchivioTest {
 
     @Test
     void testCarica() { //test di carica(): mi assicuro che carica provi a caricare un file che non esiste (non dovrebbe lanciare eccezioni poichè vengono gestite internamente)
-        File file = new File("file_non_esistent.dat");
+        File file = new File("file_non_esistente.dat");
 
         // Se esiste, lo elimino; se non esiste va bene lo stesso
         if (file.exists())
@@ -54,7 +54,7 @@ public class ServizioArchivioTest {
 
     @Test
     void testSalva() throws Exception {
-        File file = new File("archivio.dat");
+        File file = new File("archivio_prova.dat");
 
         try {
             ServizioArchivio servizio = new ServizioArchivio(file.getAbsolutePath(), archivio);
