@@ -52,7 +52,7 @@ public class ControllerPrestiti {
      * @details Determina quali prestiti mostrare (Attivi, Conclusi o Tutti)
      * invocando i filtri definiti in FiltroPrestito.
      */
-    private InterfacciaFiltro<Prestito> filtroCorrente;
+    private InterfacciaFiltro<Prestito> filtroCorrente = FiltroPrestito.filtraAttivi();
 
     //servizi per interagire con i dati:
     private ServizioPrestiti servizioPrestiti;
