@@ -51,15 +51,17 @@ public class ServizioLibri {
      * @pre Non deve esistere un altro libro con lo stesso ISBN.
      * @post Il libro è aggiunto all'archivio.
      *
-     * @throws IllegalArgumentException Se la validazione fallisce.
-     * @throws IllegalStateException Se il libro è già presente.
+     * @throws IllegalArgumentException Se la validazione fallisce (propagata dal validatore)
+     * @throws NullPointerException Se {@code libro == null} (propagata dal validatore)
      *
-     * @see Validatore
+     * @throws IllegalStateException Se il libro è già presente (propagata dall'archvio)
+     * @throws NullPointerException Se {@code libro == null} (propagata dall'archivio)
      * 
+     * @see Validatore
+     * @see Archivio
      */
     public void aggiungiLibro(Libro libro) {
         Validatore.validaLibro(libro);  //se il validatore valida libro da aggiungere(tutti i parametri sono validi)...
-        //aggiungi eventuali controlli per vedere se il libro può essere aggiunto  (nulla penso)
         archivio.aggiungiLibro(libro);  //...allora aggiungo il libro all'archivio
     }
 
@@ -74,13 +76,17 @@ public class ServizioLibri {
      * @pre I nuovi dati devono essere validi.
      * @pre Il libro deve esistere in archivio.
      * @post I dati nel sistema sono aggiornati.
-     *
-     * @throws IllegalArgumentException Se i dati non sono validi.
+     * 
+     * @throws IllegalArgumentException Se la validazione fallisce (propagata dal validatore)
+     * @throws NullPointerException Se {@code libro == null} (propagata dal validatore)
+     * 
+     * @throws NoSuchElementException Se il libro da modificare non esiste (propagata dall'archvio)
+     * @throws NullPointerException Se {@code libro == null} (propagata dall'archivio)
+     * 
+     * @see Validatore
+     * @see Archivio
      */
-    public void modificaLibro(Libro libro) {
-        if(libro == null)
-            throw new IllegalArgumentException("Libro nullo");
-        
+    public void modificaLibro(Libro libro) {        
         Validatore.validaLibro(libro);  //se il validatore valida libro da modificare(tutti i parametri sono validi)...
         
         List<Libro> risultati = archivio.cercaLibri(FiltroLibro.ricercaIsbn(libro.getIsbn()));
@@ -112,7 +118,12 @@ public class ServizioLibri {
      * @post Il libro è rimosso dall'archivio.
      *
      * @throws IllegalStateException Se si tenta di eliminare un libro con
-     * prestiti attivi.
+     * prestiti attivi
+     *
+     * @throws NoSuchElementException Se il libro da rimuovere non esiste (propagata dall'archvio)
+     * @throws NullPointerException Se {@code libro == null} (propagata dall'archivio)
+     * 
+     * @see Archivio
      */
     public void eliminaLibro(Libro libro) {
         if (libro.haPrestitiAttivi())   //se il libro  ha prestiti attivi...

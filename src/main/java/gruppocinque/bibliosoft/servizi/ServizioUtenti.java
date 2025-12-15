@@ -50,14 +50,17 @@ public class ServizioUtenti {
      * @pre Non deve esistere un altro utente con la stessa matricola.
      * @post L'utente è aggiunto all'archivio.
      *
-     * @throws IllegalArgumentException Se la validazione fallisce.
-     * @throws IllegalStateException Se la matricola è già presente.
+     * @throws IllegalArgumentException Se la validazione fallisce (propagata dal validatore)
+     * @throws NullPointerException Se {@code utente == null} (propagata dal validatore)
      *
+     * @throws IllegalStateException Se l'utente è già presente (propagata dall'archvio)
+     * @throws NullPointerException Se {@code utente == null} (propagata dall'archivio)
+     * 
      * @see Validatore
+     * @see Archivio
      */
     public void aggiungiUtente(Utente utente) {
         Validatore.validaUtente(utente);    //se il validatore valida l'utetene (tutti i parametri sono validi)...
-        //aggiungi eventuali controlli per vedere se l'utente può essere aggiunto  (nulla penso)
         archivio.aggiungiUtente(utente);    //...allora aggiungo l'utente all'archivio
     }
 
@@ -72,12 +75,18 @@ public class ServizioUtenti {
      * @pre I nuovi dati devono essere validi.
      * @pre L'utente deve esistere in archivio.
      * @post I dati dell'utente sono aggiornati nel sistema.
-     *
-     * @throws IllegalArgumentException Se i nuovi dati non sono validi.
+     * 
+     * @throws IllegalArgumentException Se la validazione fallisce (propagata dal validatore)
+     * @throws NullPointerException Se {@code utente == null} (propagata dal validatore)
+     * 
+     * @throws NoSuchElementException Se l'utente da modificare non esiste (propagata dall'archvio)
+     * @throws NullPointerException Se {@code utente == null} (propagata dall'archivio)
+     * 
+     * @see Validatore
+     * @see Archivio
      */
     public void modificaUtente(Utente utente) {
         Validatore.validaUtente(utente);    //se il validatore valida l'utetene (tutti i parametri sono validi)...
-        //aggiungi eventuali controlli per vedere se l'utente può essere modificato (nulla penso)
         archivio.modificaUtente(utente);    //...allora modifico l'utente sull'archivio
     }
 
@@ -96,7 +105,12 @@ public class ServizioUtenti {
      * @post L'utente è rimosso dall'archivio.
      *
      * @throws IllegalStateException Se l'utente ha prestiti attivi (violazione
-     * vincolo).
+     * vincolo)
+     * 
+     * @throws NoSuchElementException Se l'utente da rimuovere non esiste (propagata dall'archvio)
+     * @throws NullPointerException Se {@code utente == null} (propagata dall'archivio)
+     * 
+     * @see Archivio
      */
     public void eliminaUtente(Utente utente) {
         if (utente.haPrestitiAttivi())  //se l'utente ha prestiti attivi...

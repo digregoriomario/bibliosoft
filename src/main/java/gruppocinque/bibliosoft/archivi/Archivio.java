@@ -41,6 +41,9 @@ public class Archivio {
      * @pre {@code libro != null}
      * @pre Il libro non deve essere già presente (verifica su ISBN).
      * @post L'archivio contiene l'elemento aggiunto.
+     * 
+     * @throws IllegalStateException se il libro è già presente (propagata dal sottoarchivio libri)
+     * @throws NullPointerException se {@code libro == null} (propagata dal sottoarchivio libri)
      */
     public void aggiungiLibro(Libro libro) {
         libri.aggiungi(libro);
@@ -55,6 +58,9 @@ public class Archivio {
      * @pre {@code libro != da null}
      * @pre Il libro deve esistere all'interno dell'archivio.
      * @post Il libro nell'archivio è aggiornato con i nuovi dati.
+     * 
+     * @throws NoSuchElementException se il libro da modificare non esiste (propagata dal sottoarchivio libri)
+     * @throws NullPointerException se {@code libro == null} (propagata dal sottoarchivio libri)
      */
     public void modificaLibro(Libro libro) {
         libri.modifica(libro);
@@ -70,6 +76,9 @@ public class Archivio {
      * @pre Il libro deve essere presente nell'archivio.
      * @pre Nessun prestito attivo associato a questo libro
      * @post L'archivio non contiene più il libro specificato.
+     * 
+     * @throws NoSuchElementException se il libro da rimuovere non esiste (propagata dal sottoarchivio libri)
+     * @throws NullPointerException se {@code libro == null} (propagata dal sottoarchivio libri)
      */
     public void rimuoviLibro(Libro libro) {
         libri.rimuovi(libro);
@@ -125,6 +134,9 @@ public class Archivio {
      * @pre L'utente non deve essere già presente (verifica su matricola).
      * @pre L'e-mail dell'utente deve essere conforme ai requisiti istituzionali (Req. 3.3.2).
      * @post L'archivio contiene l'utente aggiunto.
+     * 
+     * @throws IllegalStateException se l'utente è già presente (propagata dal sottoarchivio utenti)
+     * @throws NullPointerException se {@code utente == null} (propagata dal sottoarchivio utenti)
      */
     public void aggiungiUtente(Utente utente) {
         utenti.aggiungi(utente);
@@ -139,6 +151,9 @@ public class Archivio {
      * @pre {@code utente != null}
      * @pre L'utente deve esistere all'interno dell'archivio.
      * @post L'utente nell'archivio è aggiornato con i nuovi dati.
+     * 
+     * @throws NoSuchElementException se l'utente da modificare non esiste (propagata dal sottoarchivio utenti)
+     * @throws NullPointerException se {@code utente == null} (propagata dal sottoarchivio utenti)
      */
     public void modificaUtente(Utente utente) {
         utenti.modifica(utente);
@@ -154,6 +169,9 @@ public class Archivio {
      * @pre L'utente deve essere presente nell'archivio.
      * @pre Nessun prestito attivo o in ritardo associato a questo utente.
      * @post L'archivio non contiene più l'utente specificato.
+     * 
+     * @throws NoSuchElementException se l'utente da rimuovere non esiste (propagata dal sottoarchivio utenti)
+     * @throws NullPointerException se {@code utente == null} (propagata dal sottoarchivio utenti)
      */
     public void rimuoviUtente(Utente utente) {
         utenti.rimuovi(utente);
@@ -207,6 +225,9 @@ public class Archivio {
      * @pre {@code prestito != null}
      * @pre Ci sono libri e utenti in archivio.
      * @post Aggiunta prestito in archivio.
+     * 
+     * @throws IllegalStateException se il prestito è già presente (propagata dal sottoarchivio prestiti)
+     * @throws NullPointerException se {@code prestito == null} (propagata dal sottoarchivio prestiti)
      */
     public void aggiungiPrestito(Prestito prestito) {
         prestiti.aggiungi(prestito); 
@@ -221,6 +242,9 @@ public class Archivio {
      * @pre {@code prestito != null}
      * @pre Ci sono prestiti in archivio.
      * @post Modifica dello stato e della data effettiva del prestito.
+     * 
+     * @throws NoSuchElementException se il prestito da modificare non esiste (propagata dal sottoarchivio prestiti)
+     * @throws NullPointerException se {@code prestito == null} (propagata dal sottoarchivio prestiti)
      */
     public void modificaPrestito(Prestito prestito) {
          prestiti.modifica(prestito);
@@ -234,6 +258,9 @@ public class Archivio {
      * @pre {@code prestito != null}
      * @pre Ci sono prestiti in archivio.
      * @post L'archivio non contiene il prestito selezionato.
+     * 
+     * @throws NoSuchElementException se il prestito da rimuovere non esiste (propagata dal sottoarchivio prestiti)
+     * @throws NullPointerException se {@code prestito == null} (propagata dal sottoarchivio prestiti)
      */
     public void rimuoviPrestito(Prestito prestito) {
         prestiti.rimuovi(prestito);

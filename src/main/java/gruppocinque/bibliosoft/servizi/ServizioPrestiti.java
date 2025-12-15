@@ -60,6 +60,11 @@ public class ServizioPrestiti {
      *
      * @throws IllegalStateException Se l'utente ha troppi prestiti o il libro
      * non è disponibile.
+     * 
+     * @throws IllegalStateException Se il prestito è già presente (propagata dall'archivio)
+     * @throws NullPointerException Se {@code prestito == null} (propagata dall'archivio)
+     * 
+     * @see Archivio
      */
     public void registraPrestito(Utente utente, Libro libro, LocalDate dataPrevista) {
         if(utente.getPrestitiAttivi().size() >= MAX_PRESTITI_ATTIVI)  //se l'utente ha raggiunto il numero di prestiti attivi massimo o più...
@@ -95,6 +100,11 @@ public class ServizioPrestiti {
      * dell'utente.
      *
      * @throws IllegalStateException Se il prestito è già concluso.
+     * 
+     * @throws NoSuchElementException Se il prestito da modificare non esiste (propagata dall'archivio)
+     * @throws NullPointerException Se {@code presito == null} (propagata dall'archivio)
+     * 
+     * @see Archivio
      */
     public void registraRestituzione(Prestito prestito) {
         if (prestito.getStato() == StatoPrestito.CONCLUSO)  //se lo stato del prestito è gia "CONCLUSO"...
@@ -115,6 +125,11 @@ public class ServizioPrestiti {
      * prevista.
      *
      * @post I prestiti scaduti vengono impostati allo stato IN_RITARDO.
+     * 
+     * @throws NoSuchElementException Se il prestito da modificare non esiste (propagata dall'archivio)
+     * @throws NullPointerException Se {@code presito == null} (propagata dall'archivio)
+     * 
+     * @see Archivio
      */
     public void aggiornaRitardi() {
         LocalDate oggi = LocalDate.now();   //prendo la data di oggi
