@@ -44,6 +44,8 @@ public class Archivio {
      * 
      * @throws IllegalStateException se il libro è già presente (propagata dal sottoarchivio libri)
      * @throws NullPointerException se {@code libro == null} (propagata dal sottoarchivio libri)
+     * 
+     * @see Sottoarchivio
      */
     public void aggiungiLibro(Libro libro) {
         libri.aggiungi(libro);
@@ -61,6 +63,8 @@ public class Archivio {
      * 
      * @throws NoSuchElementException se il libro da modificare non esiste (propagata dal sottoarchivio libri)
      * @throws NullPointerException se {@code libro == null} (propagata dal sottoarchivio libri)
+     * 
+     * @see Sottoarchivio
      */
     public void modificaLibro(Libro libro) {
         libri.modifica(libro);
@@ -79,6 +83,8 @@ public class Archivio {
      * 
      * @throws NoSuchElementException se il libro da rimuovere non esiste (propagata dal sottoarchivio libri)
      * @throws NullPointerException se {@code libro == null} (propagata dal sottoarchivio libri)
+     * 
+     * @see Sottoarchivio
      */
     public void rimuoviLibro(Libro libro) {
         libri.rimuovi(libro);
@@ -137,6 +143,8 @@ public class Archivio {
      * 
      * @throws IllegalStateException se l'utente è già presente (propagata dal sottoarchivio utenti)
      * @throws NullPointerException se {@code utente == null} (propagata dal sottoarchivio utenti)
+     * 
+     * @see Sottoarchivio
      */
     public void aggiungiUtente(Utente utente) {
         utenti.aggiungi(utente);
@@ -154,6 +162,8 @@ public class Archivio {
      * 
      * @throws NoSuchElementException se l'utente da modificare non esiste (propagata dal sottoarchivio utenti)
      * @throws NullPointerException se {@code utente == null} (propagata dal sottoarchivio utenti)
+     * 
+     * @see Sottoarchivio
      */
     public void modificaUtente(Utente utente) {
         utenti.modifica(utente);
@@ -172,6 +182,8 @@ public class Archivio {
      * 
      * @throws NoSuchElementException se l'utente da rimuovere non esiste (propagata dal sottoarchivio utenti)
      * @throws NullPointerException se {@code utente == null} (propagata dal sottoarchivio utenti)
+     * 
+     * @see Sottoarchivio
      */
     public void rimuoviUtente(Utente utente) {
         utenti.rimuovi(utente);
@@ -228,6 +240,8 @@ public class Archivio {
      * 
      * @throws IllegalStateException se il prestito è già presente (propagata dal sottoarchivio prestiti)
      * @throws NullPointerException se {@code prestito == null} (propagata dal sottoarchivio prestiti)
+     * 
+     * @see Sottoarchivio
      */
     public void aggiungiPrestito(Prestito prestito) {
         prestiti.aggiungi(prestito); 
@@ -245,6 +259,8 @@ public class Archivio {
      * 
      * @throws NoSuchElementException se il prestito da modificare non esiste (propagata dal sottoarchivio prestiti)
      * @throws NullPointerException se {@code prestito == null} (propagata dal sottoarchivio prestiti)
+     * 
+     * @see Sottoarchivio
      */
     public void modificaPrestito(Prestito prestito) {
          prestiti.modifica(prestito);
@@ -261,6 +277,8 @@ public class Archivio {
      * 
      * @throws NoSuchElementException se il prestito da rimuovere non esiste (propagata dal sottoarchivio prestiti)
      * @throws NullPointerException se {@code prestito == null} (propagata dal sottoarchivio prestiti)
+     * 
+     * @see Sottoarchivio
      */
     public void rimuoviPrestito(Prestito prestito) {
         prestiti.rimuovi(prestito);

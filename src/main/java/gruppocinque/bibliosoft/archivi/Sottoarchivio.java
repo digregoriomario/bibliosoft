@@ -38,7 +38,7 @@ public class Sottoarchivio<T> implements InterfacciaSottoarchivio<T> {
      * @param[in] elemento L'elemento da aggiungere.
      *
      * @pre {@code elemento != null}
-     * @pre elemnti non deve contenere elemento.
+     * @pre elementi non deve contenere elemento.
      * @post L'archivio contiene l'elemento aggiunto.
      *
      * @throws IllegalStateException se l'elemento è già presente.
