@@ -69,7 +69,7 @@ Se vuoi forzare anche una build pulita prima dell’avvio:
 ```bash
 mvn clean javafx:run
 ```
-##Generazione documenti Doxygen
+## Generazione documenti Doxygen
 ```bash
 doxygen Doxyfile
 ```
