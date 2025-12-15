@@ -151,10 +151,6 @@ public class ControllerLibri {
         finestraDialog.setTitle("Modifica libro");  //titolo del dialog
         finestraDialog.showAndWait().ifPresent(libro -> {   //aspetto che il bibliotecario prema OK e prelevo i dati
             try {
-                //***il seguente controllo è effettuato anche al livello di servizio ma lo ripeto qui affinchè il dialog non venga mostrato affatto in caso di errore***             
-                if (libro.getCopieTotali() < selezionato.getCopieInPrestito())//controllo se il bibliotecario ha inserito un numero di copie totali inferiore al numero di copie già in prestito
-                    throw new IllegalStateException("Devi inserire un numero di copie totali > " + selezionato.getCopieInPrestito() + " (copie disponibili)");
-                
                 servizioLibri.modificaLibro(libro); //chiedo al servizio libri di registrare le modifiche sul libro
                 ControllerPrincipale.modificheEffettuate = true;    //registro la modifica
                 aggiorna(); //aggiorno tutta la vista
